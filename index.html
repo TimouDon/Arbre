@@ -158,6 +158,8 @@ main>section{animation:viewIn .22s ease-out}
 .dex .unknown .media{filter:brightness(.32) contrast(.45) grayscale(1)}
 .dex .unknown .plate-name{color:var(--encre2);font-style:italic}
 .empty{color:var(--encre2);font-style:italic;padding:16px 0}
+.noimg{aspect-ratio:400/480;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;
+  color:var(--encre2);font-size:.82rem;background:var(--mont);border:1px dashed var(--ligne)}
 
 /* fiche */
 .kicker{font-family:Fraunces,serif;font-style:italic;color:var(--lichen);margin:0}
@@ -220,8 +222,9 @@ details.id[open]>summary::after{content:"–"}
 .track i.now{background:var(--encre2);transform:scaleY(1.8)}
 #qplate{animation:plateIn .3s ease-out}
 @keyframes plateIn{from{opacity:0;transform:scale(.97) rotate(-.6deg)}to{opacity:1;transform:none}}
-#qImg{max-height:min(44vh,420px);overflow:hidden}
-#qImg svg,#qImg img{width:100%;height:auto;margin:-5% 0;aspect-ratio:auto}
+#qImg{height:min(44vh,420px);overflow:hidden;background:var(--mont)}
+#qImg svg,#qImg img{width:100%;height:100%;object-fit:cover;aspect-ratio:auto;margin:0}
+#qImg .noimg{height:100%;aspect-ratio:auto}
 .credit{font-size:.72rem;color:var(--encre2);margin:6px 2px 0;overflow-wrap:anywhere}
 .q{font-family:Fraunces,serif;font-size:1.18rem;margin:16px 0 10px}
 .choices{display:grid;gap:9px}
@@ -419,6 +422,10 @@ select,input[type=text]{width:100%;padding:12px;border:1px solid var(--ligne);bo
     <p class="muted" id="setMsg"></p>
   </div>
   <div class="card panel">
+    <h3>État des images</h3>
+    <p class="muted" id="loadInfo"></p>
+  </div>
+  <div class="card panel">
     <h3>Crédits des planches</h3>
     <ul class="credits" id="credits"></ul>
   </div>
@@ -448,7 +455,7 @@ let fid = 0;
 // Trait légèrement tremblé, comme une gravure : filtre de déplacement sur le dessin.
 const frame = (bg, body, flip) => {
   const f = 'w' + (fid++);
-  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche à identifier">`
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche à identifier">`
     + `<defs><filter id="${f}" x="-5%" y="-5%" width="110%" height="110%">`
     + `<feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="2" seed="${fid}" result="n"/>`
     + `<feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>`
@@ -1001,11 +1008,15 @@ const shotCount = () => Object.keys(state.shots).length;
 const shotsOfSpecies = id => organsOf(id).filter(o => shotOf(id, o.id)).length;
 
 let PHOTOS = [];
+const FALLBACK = {};   // dessins gardés en réserve, par espèce et organe
+let failed = 0;        // images distantes qui n'ont pas pu être chargées
 let seed = 1;
 SPECIES.forEach(s => GROUPS[s.group].organs.map(o => ({id:o})).forEach(o => [0, 1].forEach(k => {
   const [fn, bg] = DRAW[s.id][o.id];
   const shade = k ? `color-mix(in srgb, ${bg} 85%, #7a8a70)` : bg;
-  PHOTOS.push({id:`${s.id}-${o.id}-${k}`, species:s.id, organ:o.id, svg:frame(shade, fn(rng(seed++)), k === 1)});
+  const drawing = {id:`${s.id}-${o.id}-${k}`, species:s.id, organ:o.id, svg:frame(shade, fn(rng(seed++)), k === 1)};
+  PHOTOS.push(drawing);
+  if (!k) FALLBACK[`${s.id}|${o.id}`] = drawing.svg;
 })));
 let usingPhotos = false;
 
@@ -1073,7 +1084,34 @@ const shuffle = a => { for (let i = a.length - 1; i > 0; i--){ const j = Math.fl
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const photosOf = (sid, org) => PHOTOS.filter(p => p.species === sid && p.organ === org);
-const media = p => p ? (p.svg || `<img src="${esc(p.src)}" alt="" loading="lazy">`) : '';
+const preloaded = new Set();
+function preload(p){
+  if (!p || !p.src || preloaded.has(p.src)) return;
+  preloaded.add(p.src);
+  const i = new Image(); i.src = p.src;
+}
+function preloadSoon(){
+  // garde d'avance les planches des espèces en cours de révision
+  activeCards().slice(0, 8).forEach(k => {
+    const [sid, org] = k.split('|');
+    photosOf(sid, org).slice(0, 2).forEach(preload);
+  });
+}
+const media = (p, eager) => p ? (p.svg || `<img src="${esc(p.src)}" alt="" loading="${eager ? 'eager' : 'lazy'}" decoding="async" data-k="${esc(p.species)}|${esc(p.organ)}" onerror="imgFailed(this)">`) : '';
+function imgFailed(img){
+  const tries = +(img.dataset.try || 0);
+  if (tries < 1){ // un simple hoquet de réseau mérite un second essai
+    img.dataset.try = tries + 1;
+    const src = img.getAttribute('src');
+    setTimeout(() => { img.src = ''; img.src = src; }, 700);
+    return;
+  }
+  failed++;
+  const draw = FALLBACK[img.dataset.k];
+  img.parentElement.innerHTML = draw
+    || '<div class="noimg">Image indisponible : connexion trop lente ou coupée</div>';
+}
+window.imgFailed = imgFailed;
 
 function season(){
   if (state.season !== 'auto') return state.season;
@@ -1342,7 +1380,7 @@ function matchSpecies(text){
 }
 
 function plateHtml(p, cap){
-  return `<figure class="plate"><div class="media">${media(p)}</div>
+  return `<figure class="plate"><div class="media">${media(p, true)}</div>
     <figcaption><span class="plate-organ">${esc(cap)}</span></figcaption></figure>`;
 }
 
@@ -1369,6 +1407,7 @@ function ask(){
   $('choices').className = 'choices';
   $('choices').innerHTML = '';
   $('typebox').hidden = true;
+  preload(Q.photo);
   $('qCredit').innerHTML = Q.photo.attribution ? `${esc(Q.photo.attribution)} · <a href="${esc(Q.photo.obs)}" target="_blank" rel="noopener">iNaturalist</a>` : '';
 
   if (Q.mode === 'duel'){
@@ -1386,7 +1425,7 @@ function ask(){
     $('qText').textContent = 'De quel arbre s\'agit-il ?';
     renderChoices(buildOptions(sid), false);
   } else {
-    $('qstage').innerHTML = `<figure class="plate" id="qplate"><div class="media" id="qImg">${media(Q.photo)}</div>
+    $('qstage').innerHTML = `<figure class="plate" id="qplate"><div class="media" id="qImg">${media(Q.photo, true)}</div>
       <figcaption><span class="plate-organ">${organLabel(org)}</span><span>${count}</span></figcaption></figure>`;
     if (Q.mode === 'saisie'){
       $('qText').textContent = 'Sans liste : quel est son nom ?';
@@ -1399,6 +1438,7 @@ function ask(){
     }
   }
   closeSheet();
+  setTimeout(preloadSoon, 400);
 }
 
 function renderChoices(opts, recall){
@@ -1610,6 +1650,10 @@ function renderSettings(){
   $('setFocus').innerHTML = '<option value="all">Tout mélangé, recommandé</option>'
     + usable.map(o => `<option value="${o.id}">${o.label} uniquement</option>`).join('');
   $('setFocus').value = state.focus;
+  const nphotos = PHOTOS.filter(p => p.src).length;
+  $('loadInfo').textContent = usingPhotos
+    ? `${nphotos} planches photo chargées depuis arbres.json.` + (failed ? ` ${failed} images n'ont pas pu être affichées : vérifie ta connexion ou un éventuel bloqueur.` : '')
+    : "Aucun arbres.json lu : l'app tourne sur mes dessins. Le fichier doit être à côté d'index.html, et la page servie par GitHub Pages, pas ouverte depuis les fichiers du téléphone.";
   const credited = PHOTOS.filter(p => p.attribution);
   $('credits').innerHTML = credited.length ? credited.map(p => `<li>${esc(sp(p.species).fr)} : ${esc(p.attribution)} (<a href="${esc(p.obs)}" target="_blank" rel="noopener">source</a>)</li>`).join('') : '<li class="muted">Dessins du prototype. Les crédits iNaturalist apparaîtront ici dès que les photos seront chargées.</li>';
 }
@@ -2412,6 +2456,7 @@ async function loadPhotos(){
     const combos = new Set(real.map(p => `${p.species}|${p.organ}`));
     PHOTOS = PHOTOS.filter(p => !combos.has(`${p.species}|${p.organ}`)).concat(real.map(p => ({...p, id:String(p.id)})));
     usingPhotos = true;
+    setTimeout(preloadSoon, 800);
     if (!$('home').hidden) renderHome();
     if (!$('herbier').hidden) renderHerbier();
     if (!$('settings').hidden) renderSettings();
