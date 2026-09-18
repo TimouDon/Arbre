@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E8E4D3">
+<title>Quel arbre ?</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23E8E4D3'/%3E%3Cpath d='M16 2.5C7 8.5 7 22 16 29.5' fill='none' stroke='%2316302A' stroke-width='2'/%3E%3Cpath d='M16%205.0%2021.1%202.1%20M16%208.1%2023.1%204.1%20M16%2011.2%2024.5%206.4%20M16%2014.3%2025.3%209.0%20M16%2017.4%2025.3%2012.2%20M16%2020.5%2024.5%2015.7%20M16%2023.6%2023.0%2019.7%20M16%2026.7%2021.0%2023.9' stroke='%2393A62F' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M16 2.5V31' stroke='%2316302A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Karla:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papier:#E8E4D3; --papier2:#DFDAC6; --mont:#DCD7C1; --plaque:#F3F0E4;
+  --encre:#16302A; --encre2:#5A6A5C; --ligne:#C4BEA6;
+  --lichen:#8FA32C; --lichen-clair:#B7C95A; --rouille:#9E4526;
+  --o1:0 1px 2px rgba(40,50,35,.10);
+  --o2:0 2px 4px rgba(40,50,35,.10), 0 10px 22px -16px rgba(40,50,35,.55);
+  --o3:0 4px 10px rgba(40,50,35,.12), 0 22px 40px -22px rgba(40,50,35,.6);
+  --r:10px; --tab:76px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --papier:#121815; --papier2:#0D1210; --mont:#1B231E; --plaque:#212A24;
+  --encre:#E9E6D6; --encre2:#9DAA98; --ligne:#37443C;
+  --lichen:#B4C74E; --lichen-clair:#CFDD7C; --rouille:#DC8460;
+  --o1:0 1px 2px rgba(0,0,0,.5); --o2:0 2px 6px rgba(0,0,0,.5), 0 12px 26px -16px #000;
+  --o3:0 6px 14px rgba(0,0,0,.55), 0 24px 44px -22px #000;
+}}
+:root[data-theme="dark"]{
+  --papier:#121815; --papier2:#0D1210; --mont:#1B231E; --plaque:#212A24;
+  --encre:#E9E6D6; --encre2:#9DAA98; --ligne:#37443C;
+  --lichen:#B4C74E; --lichen-clair:#CFDD7C; --rouille:#DC8460;
+  --o1:0 1px 2px rgba(0,0,0,.5); --o2:0 2px 6px rgba(0,0,0,.5), 0 12px 26px -16px #000;
+  --o3:0 6px 14px rgba(0,0,0,.55), 0 24px 44px -22px #000;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100svh;color:var(--encre);
+  font:400 17px/1.55 Karla,system-ui,sans-serif;
+  background:linear-gradient(180deg,var(--papier) 0%,var(--papier2) 100%) fixed;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body::before{mix-blend-mode:screen;opacity:.2}}
+h1,h2,h3,.plate-name,.big,.t,.primary,.tab b{font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 0,"WONK" 1}
+h1{font-size:2.3rem;line-height:1.02;font-weight:600;margin:2px 0 4px;letter-spacing:-.02em}
+h2{font-size:1.7rem;line-height:1.1;font-weight:600;margin:0 0 2px}
+h3{font-size:1.05rem;font-weight:600;margin:14px 0 4px}
+p{margin:6px 0;max-width:62ch}
+figure{margin:0;position:relative}
+.muted{color:var(--encre2);font-size:.9rem}
+.sci{font-style:italic;color:var(--encre2)}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;border:0;background:none}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--lichen);outline-offset:3px}
+
+/* barre haute */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;
+  padding:10px 18px;background:color-mix(in srgb,var(--papier) 82%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s}
+.topbar.scrolled{border-bottom-color:var(--ligne)}
+.logo{width:26px;height:26px;flex:0 0 auto;color:var(--encre)}
+.wordmark{font-family:Fraunces,serif;font-variation-settings:"SOFT" 0,"WONK" 1;font-weight:600;font-size:1.05rem;letter-spacing:-.01em}
+.back{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--encre2);font-size:.92rem;padding:8px 2px;cursor:pointer}
+.season-chip{margin-left:auto;font-size:.78rem;color:var(--encre2);border:1px solid var(--ligne);border-radius:99px;padding:3px 11px;background:var(--plaque)}
+
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:12px 18px calc(var(--tab) + 28px)}
+main>section{animation:viewIn .22s ease-out}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* barre d'onglets */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--papier) 88%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--ligne)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 6px;cursor:pointer;color:var(--encre2);border-radius:8px;transition:color .15s}
+.tab svg{width:23px;height:23px}
+.tab b{font-weight:500;font-size:.76rem}
+.tab[aria-current="true"]{color:var(--encre)}
+.tab[aria-current="true"] svg{color:var(--lichen)}
+.tab:active{transform:scale(.94)}
+.tab .dot{position:absolute;margin:-2px 0 0 18px;width:7px;height:7px;border-radius:50%;background:var(--rouille)}
+
+/* cartes et planches */
+.card{background:var(--plaque);border:1px solid var(--ligne);border-radius:var(--r);box-shadow:var(--o2)}
+.plate{position:relative;width:100%;background:var(--plaque);padding:10px 10px 0;border-radius:3px;box-shadow:var(--o2)}
+.plate::before,.plate::after{content:"";position:absolute;width:13px;height:13px;border:1.5px solid var(--encre2);opacity:.45}
+.plate::before{left:4px;top:4px;border-right:0;border-bottom:0}
+.plate::after{right:4px;bottom:4px;border-left:0;border-top:0}
+.plate .media{overflow:hidden;background:var(--mont);border-radius:1px}
+.media svg,.media img{display:block;width:100%;height:auto;aspect-ratio:400/480;object-fit:cover}
+.plate figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding:8px 2px 9px;border-top:1px solid var(--ligne);margin-top:9px;font-size:.84rem;color:var(--encre2)}
+.plate-name{font-size:1.03rem;color:var(--encre)}
+.plate-organ{font-style:italic}
+#hero{transform:rotate(-.7deg);box-shadow:var(--o3);margin:14px 0 18px}
+#hero .media{position:relative}
+
+/* boutons */
+.primary{display:block;width:100%;border-radius:var(--r);padding:16px;background:var(--encre);color:var(--papier);
+  font-size:1.1rem;font-weight:600;cursor:pointer;box-shadow:var(--o2);transition:transform .12s,box-shadow .12s}
+.primary:active{transform:translateY(2px);box-shadow:var(--o1)}
+.primary:disabled{opacity:.4;box-shadow:none}
+.secondary{display:block;width:100%;border:1px solid var(--ligne);border-radius:var(--r);padding:13px;background:var(--plaque);cursor:pointer;margin-top:10px;font-family:Fraunces,serif;box-shadow:var(--o1)}
+.secondary:active{transform:translateY(1px)}
+.link{color:var(--encre2);text-decoration:underline;cursor:pointer;font-size:.9rem;padding:6px 0}
+
+/* carte de session */
+.gocard{display:flex;align-items:center;gap:14px;padding:16px;margin:4px 0 16px;cursor:pointer;width:100%;text-align:left}
+.gocard .go-t{font-family:Fraunces,serif;font-size:1.25rem;font-weight:600;display:block}
+.gocard .go-s{font-size:.86rem;color:var(--encre2)}
+.gocard .chev{margin-left:auto;color:var(--lichen);font-size:1.5rem;line-height:1}
+.gocard:active{transform:translateY(2px);box-shadow:var(--o1)}
+.gocard:disabled{opacity:.5}
+
+/* entrées */
+.entries{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.entries button{width:100%;display:flex;align-items:center;gap:13px;padding:14px;cursor:pointer;text-align:left}
+.entries button:active{transform:translateY(1px)}
+.entries .ico{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--mont);display:flex;align-items:center;justify-content:center;color:var(--encre2)}
+.entries .ico svg{width:19px;height:19px}
+.entries .t{font-size:1.08rem;display:block}
+.entries .s{font-size:.83rem;color:var(--encre2)}
+
+/* marques d'organe */
+.marks{display:flex;gap:7px;flex:0 0 auto}
+.marks svg{width:20px;height:20px;display:block}
+.marks .m{color:var(--ligne);transition:color .3s}
+.marks .m.seen{color:var(--encre2)}
+.marks .m.known{color:var(--lichen)}
+.marks .m.fresh{animation:stamp .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes stamp{0%{transform:scale(1.9) rotate(-9deg);opacity:0}55%{opacity:1}100%{transform:none}}
+
+/* herbier */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 0;font-size:.79rem;color:var(--encre2)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend svg{width:17px;height:17px}
+.legend .seen{color:var(--encre2)}
+.legend .known{color:var(--lichen)}
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px}
+.filters button{border:1px solid var(--ligne);background:var(--plaque);border-radius:99px;padding:7px 15px;cursor:pointer;font-size:.9rem;box-shadow:var(--o1)}
+.filters button[aria-pressed="true"]{background:var(--encre);color:var(--papier);border-color:var(--encre)}
+.sortline{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.85rem;color:var(--encre2)}
+.sortline select{width:auto;flex:0 0 auto;padding:7px 9px;font-size:.85rem}
+.dex{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;align-items:start}
+.dex button{width:100%;cursor:pointer;text-align:left;transition:transform .12s}
+.dex button:active{transform:scale(.97)}
+.dex .plate{padding:8px 8px 0}
+.dex figcaption{padding:7px 2px 9px;display:block}
+.dex .plate-name{display:block;font-size:1rem;line-height:1.2}
+.dex .sci{display:block;font-size:.77rem}
+.dex .marks{margin-top:7px}
+.dex .unknown{box-shadow:var(--o1)}
+.dex .unknown .media{filter:brightness(.32) contrast(.45) grayscale(1)}
+.dex .unknown .plate-name{color:var(--encre2);font-style:italic}
+.empty{color:var(--encre2);font-style:italic;padding:16px 0}
+.noimg{aspect-ratio:400/480;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;
+  color:var(--encre2);font-size:.82rem;background:var(--mont);border:1px dashed var(--ligne)}
+
+/* fiche */
+.kicker{font-family:Fraunces,serif;font-style:italic;color:var(--lichen);margin:0}
+.warn{color:var(--rouille)}
+details.id{margin:16px 0 0;border-radius:var(--r);border:1px solid var(--ligne);background:var(--plaque);box-shadow:var(--o1)}
+details.id>summary{list-style:none;cursor:pointer;padding:13px 14px;font-family:Fraunces,serif;font-size:1.05rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.id>summary::-webkit-details-marker{display:none}
+details.id>summary::after{content:"+";color:var(--encre2);font-size:1.25rem;line-height:1}
+details.id[open]>summary::after{content:"–"}
+.idcard{margin:0;padding:0 14px 8px}
+.idcard div{display:flex;gap:14px;justify-content:space-between;padding:9px 0}
+.idcard div+div{border-top:1px solid var(--ligne)}
+.idcard dt{color:var(--encre2);font-size:.84rem;flex:0 0 38%;margin:0}
+.idcard dd{margin:0;flex:1;text-align:right;font-size:.91rem}
+.fact{border-left:3px solid var(--lichen);padding:3px 0 3px 14px;margin:18px 0 0;font-size:.97rem}
+.toxbox{border-left:3px solid var(--rouille);background:color-mix(in srgb,var(--rouille) 8%,transparent);border-radius:0 8px 8px 0;padding:8px 12px;margin:14px 0 0;font-size:.92rem}
+.toxbox b{font-family:Fraunces,serif;font-weight:600;display:block;font-size:.85rem;color:var(--rouille)}
+.check{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--ligne);margin:0;color:var(--encre);font-size:.95rem}
+.check input{width:22px;height:22px;flex:0 0 auto;accent-color:var(--lichen);margin-top:2px}
+.check b{font-family:Fraunces,serif;font-weight:600}
+.fact b{font-family:Fraunces,serif;font-weight:600;display:block;font-size:.85rem;color:var(--encre2)}
+.orgblock{margin-top:20px;border-top:1px solid var(--ligne);padding-top:12px}
+.orgblock h3{display:flex;align-items:center;gap:8px;margin:0 0 3px}
+.orgblock h3 svg{width:19px;height:19px}
+.orgblock h3 .m.known{color:var(--lichen)}
+.orgblock>p{font-size:.9rem;margin:0 0 11px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:start}
+.pair>*{min-width:0}
+.pair .plate{padding:8px 8px 0}
+.pair figcaption{padding:6px 2px 8px;font-size:.76rem;flex-wrap:wrap}
+.addshot{width:100%;min-height:150px;border:1.5px dashed var(--ligne);border-radius:var(--r);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--encre2);
+  font-family:Fraunces,serif;font-size:.94rem;padding:14px;text-align:center;background:color-mix(in srgb,var(--plaque) 45%,transparent)}
+.addshot:active{transform:scale(.98)}
+.addshot svg{width:26px;height:26px}
+.shotacts{display:flex;gap:16px;margin-top:4px}
+.warnbox{border-left:3px solid var(--rouille);padding:3px 0 3px 12px;margin-top:12px;font-size:.88rem;color:var(--rouille)}
+
+/* quiz : duel et indices croisés */
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:2px}
+.duel button{position:relative;width:100%;cursor:pointer;text-align:left;transition:transform .12s}
+.duel button:active{transform:scale(.97)}
+.duel .plate{padding:8px 8px 0}
+.duel .tag{position:absolute;left:12px;top:12px;z-index:2;background:var(--plaque);border:1px solid var(--ligne);border-radius:50%;
+  width:27px;height:27px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-weight:600;font-size:.95rem}
+.duel .plate.good{box-shadow:0 0 0 2.5px var(--lichen),var(--o2)}
+.duel .plate.bad{box-shadow:0 0 0 2.5px var(--rouille),var(--o2)}
+.duel figcaption{padding:7px 2px 8px;font-size:.78rem}
+#typebox{margin-top:4px}
+#typein{font-family:Fraunces,serif;font-size:1.15rem;padding:15px}
+.typeacts{display:flex;align-items:center;gap:14px;margin-top:10px}
+.typeacts .primary{flex:1;margin:0}
+.hintline{font-size:.85rem;color:var(--encre2);margin-top:8px}
+
+/* quiz */
+.qtop{display:flex;align-items:center;gap:12px;margin:4px 0 14px}
+.track{flex:1;display:flex;gap:4px}
+.track i{flex:1;height:4px;border-radius:2px;background:var(--ligne);transition:background .3s,transform .3s}
+.track i.done{background:var(--lichen)}
+.track i.now{background:var(--encre2);transform:scaleY(1.8)}
+#qplate{animation:plateIn .3s ease-out}
+@keyframes plateIn{from{opacity:0;transform:scale(.97) rotate(-.6deg)}to{opacity:1;transform:none}}
+#qImg{height:min(44vh,420px);overflow:hidden;background:var(--mont)}
+#qImg svg,#qImg img{width:100%;height:100%;object-fit:cover;aspect-ratio:auto;margin:0}
+#qImg .noimg{height:100%;aspect-ratio:auto}
+.credit{font-size:.72rem;color:var(--encre2);margin:6px 2px 0;overflow-wrap:anywhere}
+.q{font-family:Fraunces,serif;font-size:1.18rem;margin:16px 0 10px}
+.choices{display:grid;gap:9px}
+.choices.recall{grid-template-columns:1fr 1fr}
+.choice{text-align:left;border:1px solid var(--ligne);border-left:3px solid var(--ligne);background:var(--plaque);
+  border-radius:var(--r);padding:15px 16px;cursor:pointer;font-family:Fraunces,serif;font-size:1.05rem;box-shadow:var(--o1);
+  transition:transform .12s,border-color .2s,opacity .2s}
+.choice:active{transform:scale(.985)}
+.choice i{font-family:Karla,sans-serif;font-style:italic;color:var(--encre2);font-size:.85rem;margin-left:6px}
+.choice.good{border-color:var(--lichen);border-left-color:var(--lichen);background:color-mix(in srgb,var(--lichen) 13%,var(--plaque))}
+.choice.bad{border-color:var(--rouille);border-left-color:var(--rouille)}
+.choice:disabled{cursor:default}
+.choice:disabled:not(.good):not(.bad){opacity:.4;box-shadow:none}
+
+/* feuille de résultat */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(20,25,18,.35);opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;transform:translateY(104%);transition:transform .28s cubic-bezier(.25,1,.35,1);
+  background:var(--plaque);border-top:1px solid var(--ligne);border-radius:16px 16px 0 0;box-shadow:var(--o3);
+  padding:8px 18px calc(18px + env(safe-area-inset-bottom));max-height:82svh;overflow-y:auto}
+.sheet.on{transform:none}
+.grip{width:38px;height:4px;border-radius:2px;background:var(--ligne);margin:2px auto 10px}
+.sheet .inner-s{max-width:560px;margin:0 auto}
+.sheet #next{position:sticky;bottom:0;margin-top:14px}
+.sheet::after{content:"";position:sticky;bottom:0;display:block;height:10px;background:var(--plaque)}
+.verdict{font-family:Fraunces,serif;font-size:1.15rem;margin:0 0 6px;display:flex;align-items:center;gap:9px}
+.verdict .seal{width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.9rem;animation:stamp .45s cubic-bezier(.2,1.4,.4,1)}
+.verdict.good{color:var(--lichen)}
+.verdict.bad{color:var(--rouille)}
+.sheet p{font-size:.95rem}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:8px}
+.compare .plate{padding:8px 8px 0}
+.compare h3{margin:7px 0 2px;font-size:.98rem}
+.compare h3 span{font-family:Karla,sans-serif;font-weight:400;font-size:.78rem;color:var(--encre2)}
+.compare p{font-size:.85rem;margin:0}
+.levelup{display:flex;align-items:center;gap:9px;margin-top:12px;padding-top:10px;border-top:1px solid var(--ligne);font-size:.9rem;color:var(--lichen)}
+.levelup svg{width:21px;height:21px}
+
+/* bilan */
+.big{font-size:2.6rem;font-weight:600;line-height:1;margin:6px 0 2px}
+.reveal{opacity:0;transform:translateY(8px);animation:viewIn .35s ease-out forwards}
+.endcard{padding:18px;text-align:center;margin-top:8px}
+.endcard .sub{color:var(--encre2);font-size:.9rem}
+.winline{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--ligne)}
+.winline .seal{flex:0 0 auto;width:28px;height:28px;border:1.5px solid var(--lichen);color:var(--lichen);border-radius:50%;display:flex;align-items:center;justify-content:center;animation:stamp .5s cubic-bezier(.2,1.4,.4,1)}
+ul.plain{padding-left:18px}
+
+/* progrès */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 4px}
+.stat{padding:13px 10px;text-align:center}
+.stat b{display:block;font-family:Fraunces,serif;font-size:1.7rem;font-weight:600;line-height:1}
+.stat span{font-size:.75rem;color:var(--encre2);display:block;line-height:1.25;margin-top:3px}
+.bars{margin:8px 0 0}
+.barline{display:grid;grid-template-columns:5.5rem 1fr auto;gap:10px;align-items:center;padding:7px 0;font-size:.88rem}
+.barline .b{height:9px;border-radius:5px;background:var(--mont);overflow:hidden}
+.barline .b i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--lichen),var(--lichen-clair));transition:width .5s}
+.barline .v{color:var(--encre2);font-size:.8rem;font-variant-numeric:tabular-nums}
+.hist{display:flex;align-items:flex-end;gap:5px;height:70px;margin-top:12px;border-bottom:1px solid var(--ligne);padding-bottom:2px}
+.hist i{flex:0 0 16px;background:linear-gradient(180deg,var(--lichen-clair),var(--lichen));border-radius:3px 3px 0 0;min-height:3px}
+.hist i.low{background:var(--rouille);opacity:.75}
+.wins{list-style:none;padding:0;margin:10px 0 0}
+.wins li{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--ligne)}
+.wins .seal{flex:0 0 auto;width:28px;height:28px;border:1.5px solid var(--ligne);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ligne);font-size:.9rem}
+.wins li.done .seal{border-color:var(--lichen);color:var(--lichen);background:color-mix(in srgb,var(--lichen) 12%,transparent)}
+.wins .t{font-family:Fraunces,serif;font-size:1.02rem}
+.wins li:not(.done) .t{color:var(--encre2)}
+.wins .d{font-size:.85rem;color:var(--encre2)}
+.wins .when{font-size:.74rem;color:var(--encre2)}
+
+/* carnet */
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;align-items:start}
+.gallery .plate{padding:8px 8px 0}
+.gallery figcaption{display:block;padding:7px 2px 9px;font-size:.8rem}
+.gallery figcaption span{display:block}
+.gallery .plate-name{font-size:1rem;line-height:1.2}
+.gallery .date{color:var(--encre2);font-size:.74rem}
+.gallery img{aspect-ratio:400/480;object-fit:cover;width:100%;display:block}
+
+/* réglages */
+.panel{padding:16px;margin-top:14px}
+label{display:block;font-size:.86rem;color:var(--encre2);margin:12px 0 5px}
+select,input[type=text]{width:100%;padding:12px;border:1px solid var(--ligne);border-radius:8px;background:var(--papier);color:var(--encre);font:inherit}
+.credits{list-style:none;padding:0}
+.credits li{font-size:.78rem;overflow-wrap:anywhere;padding:3px 0}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar">
+  <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M16 2.5C7 8.5 7 22 16 29.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M16 7 11.4 5.9M16 11.5 10.4 10.2M16 16 10.2 15.1M16 20.5 11.2 20M16 24.5 12.8 24.4" stroke="currentColor" stroke-width="1.15" fill="none" stroke-linecap="round"/>
+    <path d="M16 5.0 21.1 2.1 M16 8.1 23.1 4.1 M16 11.2 24.5 6.4 M16 14.3 25.3 9.0 M16 17.4 25.3 12.2 M16 20.5 24.5 15.7 M16 23.6 23.0 19.7 M16 26.7 21.0 23.9" stroke="var(--lichen)" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+    <path d="M16 2.5V31" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+  </svg>
+  <span class="wordmark">Quel arbre&nbsp;?</span>
+  <span class="season-chip" id="seasonChip"></span>
+  <button class="back" id="back" hidden>← Retour</button>
+</header>
+
+<main class="wrap">
+<section id="home">
+  <h1>Reconnaître les arbres de Suisse</h1>
+  <p class="muted">À leurs feuilles, leur écorce, leurs fruits et leur port.</p>
+  <figure class="plate" id="hero"></figure>
+  <button class="card gocard" id="start">
+    <span><span class="go-t">S'entraîner</span><span class="go-s" id="startInfo"></span></span>
+    <span class="chev">›</span>
+  </button>
+  <ul class="entries" id="entries"></ul>
+  <p class="muted" id="homeInfo"></p>
+  <p class="muted" id="unlockInfo"></p>
+  <p class="muted" id="sourceInfo"></p>
+</section>
+
+<section id="herbier" hidden>
+  <h2>Herbier</h2>
+  <p class="muted" id="dexCount"></p>
+  <div class="legend" id="dexLegend"></div>
+  <div class="filters" id="dexFilters"></div>
+  <label class="sortline" for="dexSort">Trier par
+    <select id="dexSort">
+      <option value="ordre">ordre de découverte</option>
+      <option value="alpha">nom</option>
+      <option value="progres">progression</option>
+    </select>
+  </label>
+  <div class="dex" id="dex"></div>
+</section>
+
+<section id="progres" hidden>
+  <h2>Progrès</h2>
+  <div id="progresBody"></div>
+</section>
+
+<section id="fiche" hidden><div class="inner"></div></section>
+
+<section id="quiz" hidden>
+  <div class="qtop"><div class="track" id="track"></div><button class="link" id="quit">Quitter</button></div>
+  <div id="qstage"></div>
+  <p class="credit" id="qCredit"></p>
+  <p class="q" id="qText"></p>
+  <div class="choices" id="choices"></div>
+  <div id="typebox" hidden>
+    <input type="text" id="typein" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Écris le nom de l'espèce">
+    <div class="typeacts"><button class="primary" id="typeok">Valider</button><button class="link" id="typeno">Je ne sais pas</button></div>
+  </div>
+</section>
+
+<section id="end" hidden>
+  <div id="endBody"></div>
+  <button class="primary" id="again">Nouvelle session</button>
+  <button class="secondary" id="backHome">Revenir à l'accueil</button>
+</section>
+
+<section id="carnet" hidden>
+  <h2>Carnet de terrain</h2>
+  <p class="muted">Tes propres photos, prises sur le terrain. Elles s'ajoutent depuis la fiche de chaque espèce.</p>
+  <div id="carnetBody"></div>
+</section>
+
+<section id="settings" hidden>
+  <h2>Réglages</h2>
+  <div class="card panel">
+    <h3>Ce que tu apprends</h3>
+    <div id="packs"></div>
+    <label for="setMilieu">Milieu</label>
+    <select id="setMilieu"></select>
+  </div>
+  <div class="card panel">
+    <label for="setSeason">Saison</label>
+    <select id="setSeason">
+      <option value="auto">Automatique selon la date</option>
+      <option value="ete">Belle saison : tous les indices</option>
+      <option value="hiver">Hiver : écorces, silhouettes et conifères</option>
+    </select>
+    <label for="setFocus">Entraînement</label>
+    <select id="setFocus"></select>
+  </div>
+  <div class="card panel">
+    <h3>Transférer mes données</h3>
+    <p class="muted">Progression, carnet et photos, pour passer d'un appareil ou d'une adresse à l'autre.</p>
+    <button class="secondary" id="exportBtn">Exporter dans un fichier</button>
+    <button class="secondary" id="importBtn">Importer un fichier</button>
+    <input type="file" id="importInput" accept="application/json,.json" hidden>
+    <p class="muted" id="ioMsg"></p>
+  </div>
+  <div class="card panel">
+    <h3>Pour tester le prototype</h3>
+    <button class="secondary" id="unlockAll">Débloquer toutes les espèces</button>
+    <button class="secondary" id="reset">Effacer la progression</button>
+    <p class="muted" id="setMsg"></p>
+  </div>
+  <div class="card panel">
+    <h3>État des images</h3>
+    <p class="muted" id="loadInfo"></p>
+  </div>
+  <div class="card panel">
+    <h3>Crédits des planches</h3>
+    <ul class="credits" id="credits"></ul>
+  </div>
+</section>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <div class="grip"></div>
+  <div class="inner-s">
+    <div id="feedback"></div>
+    <button class="primary" id="next">Suivant</button>
+  </div>
+</div>
+
+<nav class="tabbar" id="tabbar">
+  <button class="tab" data-v="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 10v10h6v-6h4v6h6V10Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><b>Accueil</b></button>
+  <button class="tab" data-v="herbier"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7c-3 2.5-3.6 6.5 0 9 3.6-2.5 3-6.5 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 8.5v7" stroke="currentColor" stroke-width="1.3"/></svg><b>Herbier</b></button>
+  <button class="tab" data-v="carnet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 5l1.4-2h5.2L16 5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><b>Carnet</b></button>
+  <button class="tab" data-v="progres"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9M10 20V4M16 20v-8M22 20H2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><b>Progrès</b></button>
+  <button class="tab" data-v="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><b>Réglages</b></button>
+</nav>
+<script>
+function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const W = 400, H = 480;
+let fid = 0;
+// Trait légèrement tremblé, comme une gravure : filtre de déplacement sur le dessin.
+const frame = (bg, body, flip) => {
+  const f = 'w' + (fid++);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planche à identifier">`
+    + `<defs><filter id="${f}" x="-5%" y="-5%" width="110%" height="110%">`
+    + `<feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="2" seed="${fid}" result="n"/>`
+    + `<feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>`
+    + `<radialGradient id="v${f}" cx="50%" cy="46%" r="72%"><stop offset="60%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#3A3524" stop-opacity=".22"/></radialGradient></defs>`
+    + `<rect width="${W}" height="${H}" fill="${bg}"/>`
+    + `<g filter="url(#${f})" ${flip ? `transform="translate(${W},0) scale(-1,1)"` : ''}>${body}</g>`
+    + `<rect width="${W}" height="${H}" fill="url(#v${f})"/></svg>`;
+};
+
+// Feuilles
+function leafHetre(){
+  let v = '';
+  for (let i = 0; i < 8; i++){
+    const y = 130 + i * 36, w = 88 * Math.sin(Math.PI * (y - 70) / 370);
+    v += `<path d="M200 ${y} Q${200 + w*0.5} ${y-14} ${200 + w*0.92} ${y-30}" stroke="#4E7F3A" stroke-width="3" fill="none"/><path d="M200 ${y} Q${200 - w*0.5} ${y-14} ${200 - w*0.92} ${y-30}" stroke="#4E7F3A" stroke-width="3" fill="none"/>`;
+  }
+  return `<path d="M200 70 C305 125 310 330 200 440 C90 330 95 125 200 70Z" fill="#7DB35A" stroke="#4E7F3A" stroke-width="4"/>${v}<line x1="200" y1="70" x2="200" y2="470" stroke="#4E7F3A" stroke-width="5"/>`;
+}
+function leafBouleau(){
+  const pts = [], top = [200, 70], L = [95, 270], R = [305, 270], bot = [200, 420];
+  const edge = (a, b, n, s) => { for (let i = 0; i <= n; i++){ const t = i / n; const x = a[0] + (b[0]-a[0])*t, y = a[1] + (b[1]-a[1])*t; const o = (i % 2 ? 9 : 0) * s; pts.push(`${x + o},${y - Math.abs(o)*0.3}`); } };
+  edge(top, R, 14, 1); edge(R, bot, 8, 1); edge(bot, L, 8, -1); edge(L, top, 14, -1);
+  let v = '';
+  for (let i = 0; i < 6; i++){ const y = 150 + i * 42; const w = y < 270 ? (y - 70) * 0.5 : (420 - y) * 0.65; v += `<line x1="200" y1="${y+20}" x2="${200 + w}" y2="${y}" stroke="#5B8C3E" stroke-width="2.5"/><line x1="200" y1="${y+20}" x2="${200 - w}" y2="${y}" stroke="#5B8C3E" stroke-width="2.5"/>`; }
+  return `<polygon points="${pts.join(' ')}" fill="#A6CF62" stroke="#5B8C3E" stroke-width="3" stroke-linejoin="round"/>${v}<line x1="200" y1="80" x2="200" y2="470" stroke="#5B8C3E" stroke-width="4"/>`;
+}
+function leafEpicea(){
+  let v = '<path d="M60 450 Q180 300 340 60" stroke="#8A5A36" stroke-width="10" fill="none"/>';
+  for (let i = 0; i < 45; i++){
+    const t = i / 45, x = 60 + (340-60)*t - 40*Math.sin(Math.PI*t)*0.3, y = 450 + (60-450)*t + 20*Math.sin(Math.PI*t);
+    for (const a of [-80, -45, 45, 80]){
+      const ang = (-55 + a) * Math.PI / 180;
+      v += `<line x1="${x}" y1="${y}" x2="${x + 42*Math.cos(ang)}" y2="${y + 42*Math.sin(ang)}" stroke="#2E5A34" stroke-width="4" stroke-linecap="round"/>`;
+    }
+  }
+  return v;
+}
+// Écorces
+function barkHetre(r){
+  let v = '';
+  for (let i = 0; i < 40; i++) v += `<ellipse cx="${r()*W}" cy="${r()*H}" rx="${20 + r()*50}" ry="${2 + r()*4}" fill="${r() < .5 ? '#7F8784' : '#BCC2BF'}" opacity=".6"/>`;
+  for (let i = 0; i < 6; i++) v += `<ellipse cx="${r()*W}" cy="${r()*H}" rx="${25 + r()*25}" ry="${10 + r()*10}" fill="#8FA08A" opacity=".35"/>`;
+  return v;
+}
+function barkBouleau(r){
+  let v = '';
+  for (let i = 0; i < 7; i++) v += `<path d="M${r()*W} ${r()*H} q${30+r()*40} ${-10+r()*20} ${60+r()*60} ${-5+r()*10} q-20 ${15+r()*20} ${-60-r()*50} ${10}z" fill="#2A2A28" opacity=".85"/>`;
+  for (let i = 0; i < 55; i++) v += `<rect x="${r()*W}" y="${r()*H}" width="${15 + r()*45}" height="${2 + r()*2}" rx="1" fill="#3A3A36"/>`;
+  return v;
+}
+function barkEpicea(r){
+  let v = '';
+  for (let i = 0; i < 90; i++){ const x = r()*W, y = r()*H, w = 18 + r()*20; v += `<path d="M${x-w} ${y} Q${x} ${y+w*0.9} ${x+w} ${y}" fill="#8A5C40" stroke="#4A2F20" stroke-width="2.5"/>`; }
+  return v;
+}
+// Fruits
+function fruitHetre(){
+  let v = '';
+  for (let k = 0; k < 4; k++){
+    const a = (-135 + k * 90) * Math.PI / 180, cx = 200 + 70*Math.cos(a), cy = 250 + 70*Math.sin(a);
+    v += `<ellipse cx="${cx}" cy="${cy}" rx="55" ry="38" transform="rotate(${-135 + k*90} ${cx} ${cy})" fill="#8C6239" stroke="#5A3C22" stroke-width="3"/>`;
+    for (let s = 0; s < 14; s++){ const b = a + (s - 7) * 0.12, px = 200 + (95 + (s%3)*6)*Math.cos(b), py = 250 + (95 + (s%3)*6)*Math.sin(b); v += `<line x1="${px}" y1="${py}" x2="${px + 16*Math.cos(b)}" y2="${py + 16*Math.sin(b)}" stroke="#6E4A2A" stroke-width="2"/>`; }
+  }
+  v += `<polygon points="170,200 210,270 150,285" fill="#B07A45" stroke="#5A3C22" stroke-width="3"/><polygon points="230,205 255,285 200,275" fill="#A56E3C" stroke="#5A3C22" stroke-width="3"/>`;
+  return `<line x1="200" y1="250" x2="200" y2="470" stroke="#6E4A2A" stroke-width="6"/>${v}`;
+}
+function fruitEpicea(){
+  let v = '<line x1="200" y1="0" x2="200" y2="70" stroke="#6E4A2A" stroke-width="8"/>';
+  for (let row = 0; row < 14; row++){
+    const y = 80 + row * 26, w = 70 * Math.sin(Math.PI * (row + 1) / 15) + 12;
+    for (let c = -2; c <= 2; c++){ const x = 200 + c * w * 0.42 + (row % 2 ? w * 0.2 : 0); v += `<path d="M${x-w*0.28} ${y} Q${x} ${y+34} ${x+w*0.28} ${y}Z" fill="#9A6A40" stroke="#5A3A22" stroke-width="2.5"/>`; }
+  }
+  return v;
+}
+function fruitBouleau(){
+  let v = '<path d="M20 90 Q200 40 380 110" stroke="#5A3A2A" stroke-width="7" fill="none"/>';
+  [[110, 70, 260], [200, 62, 300], [290, 78, 240]].forEach(([x, y, l]) => {
+    v += `<path d="M${x} ${y} q8 30 0 50" stroke="#5A3A2A" stroke-width="3" fill="none"/><rect x="${x-13}" y="${y+48}" width="26" height="${l}" rx="13" fill="#9C7A4E" stroke="#5E4428" stroke-width="2.5"/>`;
+    for (let k = 0; k < l / 14; k++) v += `<path d="M${x-12} ${y+58+k*14} q12 8 24 0" stroke="#5E4428" stroke-width="1.8" fill="none"/>`;
+  });
+  return v;
+}
+// Silhouettes
+const ground = '<rect y="420" width="400" height="60" fill="#8FAE72"/>';
+function silHetre(){
+  const blobs = [[200,190,130,100],[120,230,70,60],[280,230,70,60],[200,120,90,70],[150,280,60,40],[250,280,60,40]].map(([x,y,rx,ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#4F8A3C"/>`).join('');
+  return `${ground}<rect x="186" y="260" width="28" height="170" fill="#9AA09C"/>${blobs}`;
+}
+function silEpicea(){
+  let v = `${ground}<rect x="193" y="380" width="14" height="50" fill="#6E4A2A"/>`;
+  for (let i = 0; i < 9; i++){ const y = 50 + i * 38, w = 18 + i * 17; v += `<path d="M200 ${y} L${200 + w} ${y + 70} Q200 ${y + 55} ${200 - w} ${y + 70}Z" fill="#2B4E32"/>`; }
+  return v;
+}
+function silBouleau(){
+  let v = `${ground}<path d="M196 430 L200 90 L208 430Z" fill="#F2F2EC" stroke="#9A9A92" stroke-width="1.5"/>`;
+  for (let i = 0; i < 14; i++) v += `<rect x="197" y="${130 + i * 21}" width="9" height="3" fill="#2A2A28"/>`;
+  [[200,150,70,55],[160,210,55,50],[245,200,55,55],[200,250,60,40]].forEach(([x,y,rx,ry]) => { v += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#9CC76A" opacity=".85"/>`; });
+  for (let i = 0; i < 10; i++){ const x = 110 + i * 20; v += `<path d="M${x} ${200 + (i%3)*15} q${i < 5 ? -6 : 6} 50 ${i < 5 ? -4 : 4} 100" stroke="#7FAF55" stroke-width="2" fill="none"/>`; }
+  return v;
+}
+
+// Nouvelles espèces : sapin blanc et charme
+function curvePt(t){ const u=1-t; return {x:u*u*60+2*u*t*180+t*t*340, y:u*u*450+2*u*t*300+t*t*60, a:Math.atan2(2*u*(300-450)+2*t*(60-300), 2*u*(180-60)+2*t*(340-180))}; }
+function leafSapin(){
+  let v = '<path d="M60 450 Q180 300 340 60" stroke="#7A5436" stroke-width="9" fill="none"/>';
+  for (let i = 0; i < 26; i++){
+    const p = curvePt((i + 0.5) / 26);
+    for (const side of [-1, 1]){
+      const deg = (p.a + side * Math.PI / 2 * 0.8) * 180 / Math.PI;
+      v += `<g transform="translate(${p.x} ${p.y}) rotate(${deg})"><rect x="4" y="-5" width="46" height="10" rx="5" fill="#2F5B3A"/><line x1="12" y1="-2" x2="42" y2="-2" stroke="#DDEBDD" stroke-width="1.3"/><line x1="12" y1="2" x2="42" y2="2" stroke="#DDEBDD" stroke-width="1.3"/></g>`;
+    }
+  }
+  return v;
+}
+function barkSapin(r){
+  let v = '';
+  for (let i = 0; i < 60; i++) v += `<ellipse cx="${r()*W}" cy="${r()*H}" rx="${5 + r()*8}" ry="${3 + r()*5}" fill="#D3D8D5" stroke="#8F9592" stroke-width="1.5"/>`;
+  for (let i = 0; i < 80; i++) v += `<circle cx="${r()*W}" cy="${r()*H}" r="${1 + r()*1.5}" fill="#6F7672"/>`;
+  for (let i = 0; i < 8; i++){ const x = r()*W, y = 330 + r()*140; v += `<path d="M${x} ${y} l${-4 + r()*8} ${20 + r()*30}" stroke="#6F7672" stroke-width="2"/>`; }
+  return v;
+}
+function fruitSapin(){
+  let v = '<line x1="0" y1="410" x2="400" y2="400" stroke="#7A5436" stroke-width="10"/>';
+  for (let x = 10; x < 400; x += 18) v += `<rect x="${x}" y="412" width="8" height="34" rx="4" fill="#2F5B3A"/><rect x="${x}" y="364" width="8" height="34" rx="4" fill="#2F5B3A"/>`;
+  v += '<rect x="160" y="100" width="80" height="300" rx="40" fill="#7B8A55" stroke="#4E5A33" stroke-width="3"/>';
+  for (let row = 0; row < 11; row++){
+    const y = 125 + row * 25;
+    for (const x of [178, 200, 222]){
+      v += `<path d="M${x-12} ${y} Q${x} ${y+14} ${x+12} ${y}" fill="none" stroke="#4E5A33" stroke-width="2"/><polygon points="${x-3},${y+6} ${x+3},${y+6} ${x},${y+16}" fill="#D8CB9A"/>`;
+    }
+  }
+  return v;
+}
+function silSapin(){
+  let v = `${ground}<rect x="192" y="380" width="16" height="50" fill="#7C7F7B"/>`;
+  for (let i = 0; i < 8; i++){ const y = 95 + i * 38, w = 55 + i * 14; v += `<path d="M${200 - w*0.35} ${y} L${200 + w*0.35} ${y} L${200 + w} ${y + 52} L${200 - w} ${y + 52}Z" fill="#2F5436"/>`; }
+  v += '<ellipse cx="200" cy="96" rx="48" ry="16" fill="#2F5436"/>';
+  return v;
+}
+function leafCharme(){
+  const N = 96, pts = [];
+  for (let i = 0; i < N; i++){
+    const a = i / N * Math.PI * 2 - Math.PI / 2;
+    const k = i % 4 === 0 ? 1.08 : (i % 2 === 0 ? 1.03 : 1);
+    const stretch = Math.sin(a) < 0 ? 1 + 0.18 * Math.pow(-Math.sin(a), 6) : 1;
+    pts.push(`${200 + 82 * k * Math.cos(a)},${255 + 170 * k * stretch * Math.sin(a)}`);
+  }
+  let v = '';
+  for (let i = 0; i < 13; i++){
+    const y = 120 + i * 22, w = 80 * Math.sqrt(Math.max(0, 1 - Math.pow((y - 255) / 175, 2)));
+    v += `<line x1="200" y1="${y + 18}" x2="${200 + w*0.95}" y2="${y}" stroke="#3E6E2E" stroke-width="2.5"/><line x1="200" y1="${y + 18}" x2="${200 - w*0.95}" y2="${y}" stroke="#3E6E2E" stroke-width="2.5"/>`;
+  }
+  return `<polygon points="${pts.join(' ')}" fill="#6FA34A" stroke="#3E6E2E" stroke-width="3" stroke-linejoin="round"/>${v}<line x1="200" y1="60" x2="200" y2="470" stroke="#3E6E2E" stroke-width="4"/>`;
+}
+function barkCharme(r){
+  let v = '';
+  for (let k = 0; k < 9; k++){
+    const x = k * 48 + r() * 16, d = 15 + r() * 15;
+    v += `<path d="M${x} -10 C${x+d} 110 ${x-d} 240 ${x} 360 S${x+d} 460 ${x} 500" stroke="#B5BCB8" stroke-width="${14 + r()*10}" fill="none" opacity=".75"/>`;
+    v += `<path d="M${x+14} -10 C${x+14+d} 110 ${x+14-d} 240 ${x+14} 360 S${x+14+d} 460 ${x+14} 500" stroke="#6C7571" stroke-width="3" fill="none"/>`;
+  }
+  return v;
+}
+function fruitCharme(){
+  let v = '<path d="M30 60 Q200 30 370 70" stroke="#6B5140" stroke-width="7" fill="none"/><line x1="200" y1="46" x2="200" y2="110" stroke="#6B5140" stroke-width="3"/>';
+  [[200,130,0],[160,190,-20],[240,190,20],[175,260,-10],[228,262,12],[200,330,0]].forEach(([x,y,rot]) => {
+    v += `<g transform="translate(${x} ${y}) rotate(${rot})"><ellipse cx="0" cy="40" rx="13" ry="42" fill="#C6D38A" stroke="#8A9A4E" stroke-width="2"/><ellipse cx="-16" cy="16" rx="8" ry="18" transform="rotate(25 -16 16)" fill="#C6D38A" stroke="#8A9A4E" stroke-width="2"/><ellipse cx="16" cy="16" rx="8" ry="18" transform="rotate(-25 16 16)" fill="#C6D38A" stroke="#8A9A4E" stroke-width="2"/><circle cx="0" cy="2" r="6" fill="#8C6239"/></g>`;
+  });
+  return v;
+}
+function silCharme(){
+  let v = `${ground}<rect x="186" y="270" width="28" height="160" fill="#8E9693"/>`;
+  for (let i = 0; i < 4; i++) v += `<path d="M${190 + i*6} 270 q4 80 -2 160" stroke="#6C7571" stroke-width="2" fill="none"/>`;
+  [[200,190,105,95],[140,220,50,50],[260,220,50,50],[200,120,70,50],[200,265,80,35]].forEach(([x,y,rx,ry]) => { v += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#3F7433"/>`; });
+  return v;
+}
+/* ---------- Planches du pack « fleurs » ---------- */
+const turf = '<rect y="430" width="400" height="50" fill="#89A56C"/>';
+const soil = '<rect y="430" width="400" height="50" fill="#7A6A4E"/>';
+
+function petals(cx, cy, n, rIn, rOut, w, fill, stroke){
+  let v = '';
+  for (let i = 0; i < n; i++){
+    const a = i / n * Math.PI * 2, c = Math.cos(a), s = Math.sin(a);
+    const x1 = cx + rIn * c, y1 = cy + rIn * s, x2 = cx + rOut * c, y2 = cy + rOut * s;
+    const px = -s * w, py = c * w;
+    v += `<path d="M${x1 + px} ${y1 + py} Q${(x1 + x2) / 2 + px * 1.5} ${(y1 + y2) / 2 + py * 1.5} ${x2} ${y2} Q${(x1 + x2) / 2 - px * 1.5} ${(y1 + y2) / 2 - py * 1.5} ${x1 - px} ${y1 - py}Z" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+  }
+  return v;
+}
+// Marguerite
+function fleurMarguerite(){
+  return petals(200, 235, 21, 42, 150, 17, '#FBFBF2', '#C9CBB6')
+    + '<circle cx="200" cy="235" r="46" fill="#E8B92E" stroke="#B98C18" stroke-width="3"/>'
+    + Array.from({length: 26}, (_, i) => { const a = i * 1.7, r = 6 + (i % 4) * 9; return `<circle cx="${200 + r * Math.cos(a)}" cy="${235 + r * Math.sin(a)}" r="3.4" fill="#C79A20"/>`; }).join('');
+}
+function feuilleMarguerite(){
+  const pts = [];
+  for (let i = 0; i <= 40; i++){
+    const t = i / 40, y = 70 + t * 380, w = 20 + 42 * Math.sin(Math.PI * Math.pow(t, .75));
+    pts.push(`${200 + (w + (i % 2 ? 12 : 0)) },${y}`);
+  }
+  for (let i = 40; i >= 0; i--){
+    const t = i / 40, y = 70 + t * 380, w = 20 + 42 * Math.sin(Math.PI * Math.pow(t, .75));
+    pts.push(`${200 - (w + (i % 2 ? 12 : 0))},${y}`);
+  }
+  return `<polygon points="${pts.join(' ')}" fill="#4E7A3A" stroke="#33552A" stroke-width="3" stroke-linejoin="round"/><line x1="200" y1="80" x2="200" y2="450" stroke="#33552A" stroke-width="3"/>`;
+}
+function tigeMarguerite(){
+  let v = '<path d="M205 470 C190 330 215 190 200 60" stroke="#4E7A3A" stroke-width="13" fill="none"/>';
+  for (let i = 0; i < 40; i++){ const y = 80 + i * 9.5, x = 200 + 9 * Math.sin(y / 60); v += `<line x1="${x - 7}" y1="${y}" x2="${x - 13}" y2="${y - 4}" stroke="#6E9A55" stroke-width="1.6"/><line x1="${x + 7}" y1="${y}" x2="${x + 13}" y2="${y - 4}" stroke="#6E9A55" stroke-width="1.6"/>`; }
+  v += '<path d="M196 300 q-40 -16 -52 -50 q42 4 56 44Z" fill="#4E7A3A" stroke="#33552A" stroke-width="2.5"/>';
+  v += '<path d="M209 200 q40 -14 54 -48 q-44 2 -58 42Z" fill="#4E7A3A" stroke="#33552A" stroke-width="2.5"/>';
+  return v;
+}
+function portMarguerite(){
+  let v = turf;
+  [[130, 150, 34], [200, 110, 42], [268, 175, 30], [165, 230, 26], [250, 255, 24]].forEach(([x, y, r]) => {
+    v += `<path d="M${x} ${y} C${x - 10} ${y + 120} ${x + 12} ${y + 200} ${x + 4} 440" stroke="#4E7A3A" stroke-width="7" fill="none"/>`;
+  });
+  [[130, 150, 34], [200, 110, 42], [268, 175, 30], [165, 230, 26], [250, 255, 24]].forEach(([x, y, r]) => {
+    v += petals(x, y, 14, r * .35, r, r * .26, '#FBFBF2', '#C9CBB6') + `<circle cx="${x}" cy="${y}" r="${r * .38}" fill="#E8B92E" stroke="#B98C18" stroke-width="2"/>`;
+  });
+  return v;
+}
+// Gentiane acaule
+function fleurGentiane(){
+  let v = '';
+  for (let i = 0; i < 5; i++){
+    const a = -Math.PI / 2 + i / 5 * Math.PI * 2;
+    v += `<path d="M200 235 L${200 + 155 * Math.cos(a - .34)} ${235 + 155 * Math.sin(a - .34)} Q${200 + 190 * Math.cos(a)} ${235 + 190 * Math.sin(a)} ${200 + 155 * Math.cos(a + .34)} ${235 + 155 * Math.sin(a + .34)}Z" fill="#2B4FA8" stroke="#1B3273" stroke-width="3"/>`;
+  }
+  v += '<circle cx="200" cy="235" r="62" fill="#1F3C86" stroke="#16295C" stroke-width="3"/>';
+  v += '<circle cx="200" cy="235" r="30" fill="#0F1F4D"/>';
+  for (let i = 0; i < 14; i++){ const a = i / 14 * Math.PI * 2; v += `<circle cx="${200 + 45 * Math.cos(a)}" cy="${235 + 45 * Math.sin(a)}" r="4" fill="#8FC24E"/>`; }
+  return v;
+}
+function feuilleGentiane(){
+  return `<path d="M200 60 C246 150 250 330 200 440 C150 330 154 150 200 60Z" fill="#3E7A42" stroke="#27562C" stroke-width="3"/><line x1="200" y1="75" x2="200" y2="428" stroke="#27562C" stroke-width="3"/><path d="M175 150 C186 240 186 330 178 400M225 150 C214 240 214 330 222 400" stroke="#27562C" stroke-width="1.8" fill="none"/>`;
+}
+function tigeGentiane(){
+  let v = turf + '<path d="M200 430 L200 300" stroke="#4E7A3A" stroke-width="16" fill="none"/>';
+  v += '<path d="M120 430 C140 370 165 350 196 344 168 360 150 392 146 430Z" fill="#3E7A42" stroke="#27562C" stroke-width="3"/>';
+  v += '<path d="M280 430 C260 370 235 350 204 344 232 360 250 392 254 430Z" fill="#3E7A42" stroke="#27562C" stroke-width="3"/>';
+  v += '<path d="M168 300 L232 300 218 170 182 170Z" fill="#2B4FA8" stroke="#1B3273" stroke-width="3"/>';
+  v += petals(200, 168, 5, 20, 78, 34, '#2B4FA8', '#1B3273');
+  return v;
+}
+function portGentiane(){
+  let v = turf;
+  for (let i = 0; i < 9; i++){ const a = i / 9 * Math.PI * 2; v += `<ellipse cx="${200 + 78 * Math.cos(a)}" cy="${396 + 26 * Math.sin(a)}" rx="52" ry="17" transform="rotate(${a * 57} ${200 + 78 * Math.cos(a)} ${396 + 26 * Math.sin(a)})" fill="#3E7A42" stroke="#27562C" stroke-width="2.5"/>`; }
+  [[160, 300, 52], [250, 330, 44]].forEach(([x, y, r]) => {
+    v += `<path d="M${x - 14} ${y + 70} L${x + 14} ${y + 70} ${x + 11} ${y} ${x - 11} ${y}Z" fill="#2B4FA8" stroke="#1B3273" stroke-width="2.5"/>`;
+    v += petals(x, y - 6, 5, 12, r, r * .42, '#2B4FA8', '#1B3273');
+  });
+  return v;
+}
+// Ail des ours
+function fleurAil(){
+  let v = '<path d="M200 470 L200 300" stroke="#4E7A3A" stroke-width="11" fill="none"/>';
+  const heads = [];
+  for (let i = 0; i < 13; i++){
+    const a = -Math.PI / 2 + (i / 13) * Math.PI * 2, r = 92 + (i % 3) * 22;
+    const x = 200 + r * Math.cos(a) * .95, y = 250 + r * Math.sin(a) * .8;
+    v += `<line x1="200" y1="300" x2="${x}" y2="${y}" stroke="#6E9A55" stroke-width="3"/>`;
+    heads.push([x, y]);
+  }
+  heads.forEach(([x, y]) => { v += petals(x, y, 6, 3, 26, 7, '#FCFCF4', '#BFC7AC') + `<circle cx="${x}" cy="${y}" r="5" fill="#C6D48A"/>`; });
+  return v;
+}
+function feuilleAil(){
+  return `<path d="M200 50 C258 140 262 320 206 452 C200 460 198 460 196 452 C142 320 142 140 200 50Z" fill="#5A9B45" stroke="#37672F" stroke-width="3"/>`
+    + `<line x1="200" y1="60" x2="201" y2="452" stroke="#37672F" stroke-width="2.5"/>`
+    + [0.35, 0.6, 0.85].flatMap(k => [-1, 1].map(s => `<path d="M${200 + s * 6} 120 C${200 + s * 46 * k} 220 ${200 + s * 44 * k} 330 ${200 + s * 10} 430" stroke="#37672F" stroke-width="1.5" fill="none"/>`)).join('');
+}
+function tigeAil(){
+  let v = soil + '<path d="M200 430 L200 90" stroke="#5A9B45" stroke-width="22" fill="none"/>';
+  v += '<path d="M189 430 L189 90M211 430 L211 90" stroke="#3C6E32" stroke-width="2" fill="none"/>';
+  v += '<ellipse cx="200" cy="92" rx="11" ry="5" fill="#4C8A3C"/>';
+  v += '<path d="M120 430 C150 330 175 250 196 200" stroke="#5A9B45" stroke-width="30" fill="none" stroke-linecap="round" opacity=".85"/>';
+  return v;
+}
+function portAil(){
+  let v = soil;
+  for (let i = 0; i < 16; i++){
+    const x = 30 + (i * 53) % 350, y = 250 + ((i * 37) % 150);
+    const rot = -35 + (i * 29) % 70;
+    v += `<g transform="translate(${x} ${y}) rotate(${rot}) scale(.42)"><path d="M0 -180 C58 -90 62 90 6 222 0 230 -2 230 -4 222 -58 90 -58 -90 0 -180Z" fill="#5A9B45" stroke="#37672F" stroke-width="6"/></g>`;
+  }
+  [[140, 160], [255, 200]].forEach(([x, y]) => {
+    v += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + 150}" stroke="#6E9A55" stroke-width="6"/>`;
+    for (let i = 0; i < 9; i++){ const a = i / 9 * Math.PI * 2; v += petals(x + 42 * Math.cos(a), y + 34 * Math.sin(a), 6, 2, 13, 4, '#FCFCF4', '#BFC7AC'); }
+  });
+  return v;
+}
+// Colchique d'automne
+function fleurColchique(){
+  let v = turf;
+  v += '<path d="M182 470 L182 300 218 300 218 470Z" fill="#E7DFC9" stroke="#BFB79E" stroke-width="2.5"/>';
+  for (let i = 0; i < 6; i++){
+    const a = -Math.PI / 2 + i / 6 * Math.PI * 2;
+    v += `<path d="M200 300 Q${200 + 92 * Math.cos(a - .3)} ${250 + 150 * Math.sin(a - .3)} ${200 + 66 * Math.cos(a)} ${140 + 120 * Math.sin(a)} Q${200 + 92 * Math.cos(a + .3)} ${250 + 150 * Math.sin(a + .3)} 200 300Z" fill="#C99AD2" stroke="#8E5C9B" stroke-width="2.5"/>`;
+  }
+  v += '<ellipse cx="200" cy="280" rx="26" ry="18" fill="#D9BEE0"/>';
+  for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2; v += `<line x1="200" y1="288" x2="${200 + 34 * Math.cos(a)}" y2="${248 + 34 * Math.sin(a)}" stroke="#E0C64A" stroke-width="5" stroke-linecap="round"/>`; }
+  return v;
+}
+function feuilleColchique(){
+  return `<path d="M200 55 C264 150 266 320 204 450 C200 458 198 458 196 450 C136 320 138 150 200 55Z" fill="#63A24E" stroke="#3E7233" stroke-width="3"/>`
+    + `<line x1="200" y1="65" x2="201" y2="450" stroke="#3E7233" stroke-width="2.5"/>`
+    + [0.4, 0.7].flatMap(k => [-1, 1].map(s => `<path d="M${200 + s * 6} 120 C${200 + s * 52 * k} 230 ${200 + s * 50 * k} 340 ${200 + s * 10} 430" stroke="#3E7233" stroke-width="1.5" fill="none"/>`)).join('')
+    + `<ellipse cx="200" cy="300" rx="62" ry="120" fill="#FFFFFF" opacity=".08"/>`;
+}
+function tigeColchique(){
+  let v = turf + '<path d="M176 470 L176 250 224 250 224 470Z" fill="#EDE7D4" stroke="#C3BCA2" stroke-width="3"/>';
+  v += '<path d="M176 250 q24 -26 48 0Z" fill="#DCCFE0" stroke="#A98CB3" stroke-width="2.5"/>';
+  v += '<ellipse cx="200" cy="452" rx="44" ry="30" fill="#8B7350" stroke="#5E4C33" stroke-width="3"/>';
+  return v;
+}
+function portColchique(){
+  let v = turf;
+  [[110, 300, .8], [200, 250, 1], [290, 320, .75], [155, 370, .6], [255, 395, .55]].forEach(([x, y, s]) => {
+    v += `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-18 180 L-18 0 18 0 18 180Z" fill="#E7DFC9" stroke="#BFB79E" stroke-width="2.5"/>`;
+    for (let i = 0; i < 6; i++){ const a = -Math.PI / 2 + i / 6 * Math.PI * 2; v += `<path d="M0 0 Q${100 * Math.cos(a - .42)} ${-40 + 90 * Math.sin(a - .42)} ${56 * Math.cos(a)} ${-95 + 70 * Math.sin(a)} Q${100 * Math.cos(a + .42)} ${-40 + 90 * Math.sin(a + .42)} 0 0Z" fill="#C99AD2" stroke="#8E5C9B" stroke-width="2.5"/>`; }
+    v += '</g>';
+  });
+  return v;
+}
+/* ---------- Espèces ---------- */
+// Ordre = ordre d'introduction. Les sosies arrivent en dernier.
+const SPECIES = [
+  {id:'hetre', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Hêtre', sci:'Fagus sylvatica', type:'feuillu', sosies:['charme'],
+   intro:"L'arbre le plus répandu des forêts suisses de basse altitude. Il forme des forêts sombres où peu de plantes poussent au sol.",
+   dex:{taille:"30 \u00e0 40 m", age:"150 \u00e0 250 ans", milieu:"Sols riches et bien drain\u00e9s, du Plateau au Jura", alt:"Jusque vers 1400 m", bois:"Bois dur et homog\u00e8ne : meubles, parquets, excellent bois de feu", suisse:"Deuxi\u00e8me essence du pays en volume ; plus de 40 % des feuillus suisses"},
+   fait:"Les h\u00eatres d'une r\u00e9gion fructifient tous la m\u00eame ann\u00e9e. Lors de ces \u00ab ann\u00e9es \u00e0 fa\u00eenes \u00bb, le sol en est tapiss\u00e9, puis plus rien pendant deux \u00e0 cinq ans.",
+   terrain:"Les jeunes h\u00eatres gardent leurs feuilles s\u00e8ches tout l'hiver : un rep\u00e8re facile quand tout est nu.",
+   tips:{feuille:"Bord ondulé mais pas denté, nervures parallèles bien espacées, petits poils sur le bord.",
+         ecorce:"Lisse, grise et régulière, même sur les très vieux arbres.",
+         fruit:"La faîne : une bogue hérissée qui s'ouvre en 4 et libère des graines triangulaires.",
+         silhouette:"Grand arbre au tronc gris et lisse, couronne large et arrondie."}},
+  {id:'epicea', group:'arbre', pack:'arbres', milieux:['foret'], art:"l'", fr:'Épicéa', sci:'Picea abies', type:'conifere', sosies:['sapin'],
+   intro:"Le conifère le plus courant de Suisse, très présent en montagne et dans les forêts plantées.",
+   dex:{taille:"30 \u00e0 50 m", age:"200 \u00e0 300 ans", milieu:"Montagne et sols frais ; beaucoup plant\u00e9 en plaine", alt:"Jusqu'\u00e0 la limite de la for\u00eat, vers 2000 m", bois:"Bois de r\u00e9sonance des violons et des guitares, charpente", suisse:"L'essence la plus fr\u00e9quente de Suisse : environ 37 % des arbres"},
+   fait:"Ses racines restent en surface. C'est lui qui tombe en premier dans les grandes temp\u00eates, comme Lothar en 1999.",
+   terrain:"Roule une aiguille entre tes doigts : celle de l'\u00e9pic\u00e9a a quatre faces et roule, celle du sapin est plate.",
+   tips:{feuille:"Aiguilles piquantes, carrées quand on les roule entre les doigts, disposées tout autour du rameau.",
+         ecorce:"Brun-rouge, se détache en petites écailles arrondies.",
+         fruit:"Long cône qui pend sous la branche et tombe entier au sol.",
+         silhouette:"Silhouette pointue, rameaux qui retombent comme des rideaux."}},
+  {id:'bouleau', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Bouleau', sci:'Betula pendula', type:'feuillu', sosies:[],
+   intro:"Un arbre pionnier, qui colonise vite les terrains dégagés. Son écorce blanche le rend facile à repérer de loin.",
+   dex:{taille:"15 \u00e0 25 m", age:"80 \u00e0 120 ans", milieu:"Pionnier : clairi\u00e8res, friches, sols pauvres", alt:"Jusque vers 1500 m", bois:"Bois clair et l\u00e9ger, contreplaqu\u00e9 ; \u00e9corce utilis\u00e9e comme allume-feu", suisse:"R\u00e9pandu mais rarement dominant : il colonise, puis se fait remplacer"},
+   fait:"Son \u00e9corce contient une huile qui la rend imperm\u00e9able et inflammable : elle s'allume m\u00eame tremp\u00e9e.",
+   terrain:"Au printemps, sa s\u00e8ve se r\u00e9colte en per\u00e7ant le tronc, une pratique courante en Europe du Nord.",
+   tips:{feuille:"Petite feuille en losange ou en triangle, bord doublement denté.",
+         ecorce:"Blanche, marquée de traits horizontaux et de plaques noires à la base.",
+         fruit:"Des chatons fins et pendants, qui se désagrègent à maturité.",
+         silhouette:"Tronc blanc élancé, couronne légère aux rameaux pendants."}},
+  {id:'sapin', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Sapin blanc', sci:'Abies alba', type:'conifere', sosies:['epicea'],
+   intro:"Souvent confondu avec l'épicéa. Il aime les forêts fraîches et ombragées, souvent mélangé au hêtre.",
+   dex:{taille:"40 \u00e0 50 m, parfois plus", age:"300 \u00e0 500 ans", milieu:"For\u00eats fra\u00eeches et ombrag\u00e9es, souvent m\u00eal\u00e9 au h\u00eatre", alt:"Surtout entre 600 et 1500 m", bois:"Charpente et papeterie ; bois proche de celui de l'\u00e9pic\u00e9a", suisse:"Troisi\u00e8me essence en volume, environ 16 %"},
+   fait:"C'est le plus grand arbre d'Europe : certains individus d\u00e9passent 50 m. Un jeune sapin peut attendre des d\u00e9cennies \u00e0 l'ombre avant de monter.",
+   terrain:"Ses c\u00f4nes ne tombent jamais entiers. Un c\u00f4ne complet trouv\u00e9 au sol vient forc\u00e9ment d'un \u00e9pic\u00e9a.",
+   tips:{feuille:"Aiguilles plates et souples, qui ne piquent pas, avec deux lignes blanches dessous, disposées en deux rangées.",
+         ecorce:"Gris clair argenté, lisse avec de petites poches de résine, puis fissurée en plaques.",
+         fruit:"Cône dressé sur la branche, qui se désagrège sur l'arbre : on ne le trouve jamais entier au sol.",
+         silhouette:"Branches plutôt horizontales ; les vieux arbres ont un sommet aplati, en « nid de cigogne »."}},
+  {id:'charme', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Charme', sci:'Carpinus betulus', type:'feuillu', sosies:['hetre'],
+   intro:"Souvent confondu avec le hêtre. Très utilisé pour les haies, car il supporte bien la taille.",
+   dex:{taille:"15 \u00e0 25 m", age:"100 \u00e0 150 ans", milieu:"Sols lourds, souvent en m\u00e9lange avec le ch\u00eane", alt:"Surtout en dessous de 800 m", bois:"Le bois le plus dur d'Europe : billots de boucher, manches d'outils, autrefois les dents des roues de moulin", suisse:"Commun sur le Plateau, tr\u00e8s utilis\u00e9 en haies taill\u00e9es"},
+   fait:"Son tronc n'est jamais rond : il est cannel\u00e9, comme un muscle contract\u00e9.",
+   terrain:"Comme le h\u00eatre, il garde ses feuilles s\u00e8ches en hiver. C'est pourquoi les haies de charme restent opaques toute l'ann\u00e9e.",
+   tips:{feuille:"Bord doublement denté, nervures nombreuses et serrées, feuille un peu plissée.",
+         ecorce:"Grise comme le hêtre, mais creusée de côtes verticales qui ressemblent à des muscles.",
+         fruit:"Grappes pendantes de bractées vertes à trois lobes, avec une petite noix à la base.",
+         silhouette:"Plus petit que le hêtre, tronc cannelé, couronne dense."}},
+  {id:'marguerite',
+   group:'fleur',
+   pack:'fleurs',
+   milieux:["prairie"],
+   art:"la ",
+   fr:"Marguerite",
+   sci:"Leucanthemum vulgare",
+   type:'fleur',
+   floraison:[5, 6, 7, 8, 9],
+   sosies:[],
+   intro:"La grande marguerite des pr\u00e9s, celle des bouquets. Elle fleurit de mai \u00e0 septembre dans presque toutes les prairies.",
+   dex:{taille:"30 \u00e0 80 cm", age:"Vivace, la touffe repart chaque ann\u00e9e", milieu:"Prairies, talus, bords de chemins", alt:"Du Plateau jusque vers 2000 m", bois:"Sans usage, mais les jeunes feuilles se mangent en salade", suisse:"Une des fleurs de prairie les plus r\u00e9pandues du pays"},
+   fait:"Ce qu'on prend pour une fleur est en r\u00e9alit\u00e9 un bouquet : chaque \u00ab p\u00e9tale \u00bb blanc et chaque grain jaune du centre sont des fleurs s\u00e9par\u00e9es.",
+   terrain:"Ses feuilles du bas, en cuill\u00e8re et grossi\u00e8rement dent\u00e9es, la distinguent des autres fleurs blanches des pr\u00e9s.",
+   tips:{fleur:"C\u0153ur jaune bomb\u00e9 entour\u00e9 d'une vingtaine de langues blanches.", feuille:"Feuille en spatule, bord \u00e0 grosses dents irr\u00e9guli\u00e8res, vert sombre.", tige:"Tige raide, peu ramifi\u00e9e, avec de petites feuilles \u00e9troites qui l'enserrent.", port:"Touffe dress\u00e9e, plusieurs tiges d'o\u00f9 \u00e9merge une fleur chacune."}},
+  {id:'gentiane',
+   group:'fleur',
+   pack:'fleurs',
+   milieux:["alpage"],
+   art:"la ",
+   fr:"Gentiane de Koch",
+   sci:"Gentiana acaulis",
+   type:'fleur',
+   floraison:[5, 6, 7, 8],
+   sosies:[],
+   intro:"La grande gentiane bleue des alpages, presque pos\u00e9e au sol. Elle pousse sur les pelouses de montagne, surtout sur sols acides.",
+   dex:{taille:"5 \u00e0 10 cm, la fleur fait presque toute la plante", age:"Vivace de longue dur\u00e9e", milieu:"Pelouses alpines, p\u00e2turages de montagne", alt:"Entre 1000 et 3000 m", bois:"Prot\u00e9g\u00e9e dans plusieurs cantons : elle se regarde, elle ne se cueille pas", suisse:"Embl\u00e9matique des Alpes ; c'est une autre esp\u00e8ce, la gentiane jaune, qui sert \u00e0 faire la liqueur"},
+   fait:"Sa corolle se ferme quand le temps se couvre : les montagnards s'en servaient comme barom\u00e8tre.",
+   terrain:"Une trompette bleue d\u00e9mesur\u00e9e par rapport \u00e0 la plante, pos\u00e9e sur une rosette plate : rien d'autre ne lui ressemble en montagne.",
+   tips:{fleur:"Grande trompette bleu profond \u00e0 cinq lobes pointus, gorge plus sombre.", feuille:"Feuille \u00e9paisse et luisante, en lance, group\u00e9e en rosette au ras du sol.", tige:"Tige tr\u00e8s courte : la fleur semble sortir directement de la rosette.", port:"Rosette plate d'o\u00f9 jaillissent une ou deux trompettes bleues."}},
+  {id:'ail',
+   group:'fleur',
+   pack:'fleurs',
+   milieux:["foret"],
+   art:"l'",
+   fr:"Ail des ours",
+   sci:"Allium ursinum",
+   type:'fleur',
+   floraison:[4, 5, 6],
+   sosies:["colchique"],
+   intro:"Le tapis vert des sous-bois frais au printemps, \u00e0 l'odeur d'ail reconnaissable \u00e0 plusieurs m\u00e8tres.",
+   dex:{taille:"20 \u00e0 50 cm", age:"Vivace \u00e0 bulbe, dispara\u00eet totalement en \u00e9t\u00e9", milieu:"Sous-bois frais et humides, souvent en larges colonies", alt:"Surtout en dessous de 1500 m", bois:"Feuilles tr\u00e8s utilis\u00e9es en cuisine, en pesto ou en soupe", suisse:"Tr\u00e8s commun dans les for\u00eats de feuillus du Plateau et du Jura"},
+   fait:"Son nom vient des ours, qui s'en gavent en sortant d'hibernation pour se refaire une sant\u00e9.",
+   terrain:"Froisse une feuille : l'odeur d'ail est imm\u00e9diate. C'est le seul test fiable, et il peut sauver la vie.",
+   tips:{fleur:"Ombelle de petites \u00e9toiles blanches \u00e0 six pointes, port\u00e9e par une hampe.", feuille:"Feuille large et souple, vert vif, \u00e0 long p\u00e9tiole, une seule par tige.", tige:"Hampe lisse \u00e0 section triangulaire, sans feuilles sur sa hauteur.", port:"Tapis dense de feuilles larges, en colonie, sur le sol de la for\u00eat."},
+   toxique:"Attention : ses feuilles ressemblent \u00e0 celles du colchique et du muguet, tous deux mortels. Ne cueille jamais sans froisser la feuille et sentir l'ail."},
+  {id:'colchique',
+   group:'fleur',
+   pack:'fleurs',
+   milieux:["prairie"],
+   art:"le ",
+   fr:"Colchique d'automne",
+   sci:"Colchicum autumnale",
+   type:'fleur',
+   floraison:[8, 9, 10],
+   sosies:["ail"],
+   intro:"La fleur rose des pr\u00e9s de fin d'\u00e9t\u00e9, sortie de terre sans une seule feuille. Toute la plante est mortellement toxique.",
+   dex:{taille:"10 \u00e0 30 cm", age:"Vivace \u00e0 bulbe", milieu:"Prairies humides et p\u00e2turages", alt:"Jusque vers 2000 m", bois:"Aucun usage : la colchicine qu'il contient est un poison violent", suisse:"Commun dans les prairies de fauche ; redout\u00e9 des \u00e9leveurs, car il empoisonne aussi le b\u00e9tail"},
+   fait:"Ses fleurs sortent en automne, et ses feuilles seulement au printemps suivant : d'o\u00f9 son surnom de \u00ab fils avant le p\u00e8re \u00bb.",
+   terrain:"Au printemps, ses feuilles larges poussent en touffe et n'ont aucune odeur d'ail. Dans le doute, on ne touche pas.",
+   tips:{fleur:"Calice rose lilas \u00e0 six pi\u00e8ces, sorti nu de la terre, sans feuille autour.", feuille:"Feuille large et luisante, au printemps, en touffe de trois ou quatre, sans odeur.", tige:"Pas de vraie tige : un long tube p\u00e2le qui plonge directement dans le sol.", port:"Fleurs roses isol\u00e9es dans l'herbe rase d'automne."},
+   toxique:"Mortel, y compris en petite quantit\u00e9. Confondu avec l'ail des ours au printemps, il tue chaque ann\u00e9e en Europe."}
+];
+const ORGAN_LABELS = {
+  feuille:'Feuilles', ecorce:'Écorce', fruit:'Fruits', silhouette:'Arbre entier',
+  fleur:'Fleur', tige:'Tige', port:'Port'
+};
+// Chaque groupe a ses propres indices : une fleur n'a pas d'écorce.
+const GROUPS = {
+  arbre: {label:'Arbres', organs:['feuille','ecorce','fruit','silhouette']},
+  fleur: {label:'Fleurs', organs:['fleur','feuille','tige','port']},
+  arbuste: {label:'Arbustes', organs:['feuille','fleur','fruit','port']}
+};
+const PACKS = [
+  {id:'arbres', label:'Arbres de forêt', group:'arbre'},
+  {id:'fleurs', label:'Fleurs des prés et d\'alpage', group:'fleur'}
+];
+const MILIEUX = [
+  {id:'tous', label:'Partout'},
+  {id:'foret', label:'Forêt'},
+  {id:'prairie', label:'Prairie'},
+  {id:'alpage', label:'Alpage'}
+];
+const ORGANS = Object.keys(ORGAN_LABELS).map(id => ({id, label:ORGAN_LABELS[id]}));
+const organsOf = id => GROUPS[sp(id).group].organs.map(o => ({id:o, label:ORGAN_LABELS[o]}));
+
+const DRAW = {
+  hetre:   {feuille:[leafHetre,'#DCE8D0'],   ecorce:[barkHetre,'#A3AAA7'],   fruit:[fruitHetre,'#E8E2D2'],   silhouette:[silHetre,'#CFE3EE']},
+  epicea:  {feuille:[leafEpicea,'#E3EBDD'],  ecorce:[barkEpicea,'#6A4533'],  fruit:[fruitEpicea,'#DDE7E0'],  silhouette:[silEpicea,'#D6E6F0']},
+  bouleau: {feuille:[leafBouleau,'#E6EEDC'], ecorce:[barkBouleau,'#EFEFE9'], fruit:[fruitBouleau,'#E9ECE0'], silhouette:[silBouleau,'#D2E4EE']},
+  sapin:   {feuille:[leafSapin,'#E1EADF'],   ecorce:[barkSapin,'#B9BEBB'],   fruit:[fruitSapin,'#DCE6EC'],   silhouette:[silSapin,'#D4E4EE']},
+  charme:  {feuille:[leafCharme,'#DFEAD3'],  ecorce:[barkCharme,'#8E9693'],  fruit:[fruitCharme,'#E7EADC'],  silhouette:[silCharme,'#CEE2EC']},
+  marguerite:{fleur:[fleurMarguerite,'#E9EEDD'], feuille:[feuilleMarguerite,'#E4EBD8'], tige:[tigeMarguerite,'#E7EEDE'], port:[portMarguerite,'#D8E7EE']},
+  gentiane:{fleur:[fleurGentiane,'#E2E8DE'], feuille:[feuilleGentiane,'#E5EBDC'], tige:[tigeGentiane,'#D9E6EE'], port:[portGentiane,'#D6E5EC']},
+  ail:{fleur:[fleurAil,'#E6EBDA'], feuille:[feuilleAil,'#E3EBD9'], tige:[tigeAil,'#E2E7D8'], port:[portAil,'#DCE3D4']},
+  colchique:{fleur:[fleurColchique,'#E7E9D8'], feuille:[feuilleColchique,'#E5ECDA'], tige:[tigeColchique,'#E6E9D7'], port:[portColchique,'#DFE6D6']}
+};
+const sp = id => SPECIES.find(s => s.id === id);
+const tipOf = (x, org) => (x.tips && x.tips[org]) || `Repère à écrire pour « ${(ORGAN_LABELS[org] || org).toLowerCase()} ».`;
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const organLabel = id => ORGAN_LABELS[id];
+const ICONS = {
+  feuille:'<path d="M10 2C4 6 3 12 10 18 17 12 16 6 10 2Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 4v14" stroke="currentColor" stroke-width="1.4"/>',
+  ecorce:'<rect x="3" y="2" width="14" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 3v14M10 3v14M13 3v14" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 2"/>',
+  fruit:'<path d="M10 2 4 17h12L10 2Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 12h7M7.8 8.5h4.4" stroke="currentColor" stroke-width="1.2"/>',
+  silhouette:'<circle cx="10" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 13.6V18" stroke="currentColor" stroke-width="1.6"/>',
+  fleur:'<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="10" cy="4.4" rx="2.5" ry="3.3"/><ellipse cx="15.3" cy="8.3" rx="2.5" ry="3.3" transform="rotate(72 15.3 8.3)"/><ellipse cx="13.3" cy="14.5" rx="2.5" ry="3.3" transform="rotate(144 13.3 14.5)"/><ellipse cx="6.7" cy="14.5" rx="2.5" ry="3.3" transform="rotate(216 6.7 14.5)"/><ellipse cx="4.7" cy="8.3" rx="2.5" ry="3.3" transform="rotate(288 4.7 8.3)"/><circle cx="10" cy="10" r="2.3"/></g>',
+  tige:'<path d="M10 19V3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10 9C6.4 8.6 5 6.6 5 4.2c2.8-.2 4.7 1.6 5 4.8ZM10 14c3.6-.4 5-2.4 5-4.8-2.8-.2-4.7 1.6-5 4.8Z" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+  port:'<path d="M3 18h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M10 18V7M10 18C7 15 5.5 11.5 5.6 7.4M10 18c3-3 4.5-6.5 4.4-10.6" fill="none" stroke="currentColor" stroke-width="1.5"/>'
+};
+// Contour fermé de chaque organe : sert de fenêtre pour la photo de l'utilisateur.
+const SHAPES = {
+  feuille:'M10 2C4 6 3 12 10 18 17 12 16 6 10 2Z',
+  ecorce:'M4.5 2h11a1.5 1.5 0 011.5 1.5v13a1.5 1.5 0 01-1.5 1.5h-11A1.5 1.5 0 013 16.5v-13A1.5 1.5 0 014.5 2Z',
+  fruit:'M10 2 4 17h12L10 2Z',
+  silhouette:'M10 2.4a5.6 5.6 0 110 11.2 5.6 5.6 0 010-11.2Z',
+  fleur:'M10 1.2a3 3 0 012.9 3.9 3 3 0 013.9 4.4 3 3 0 01-1.6 4.9 3 3 0 01-4.1 3.3 3 3 0 01-4.2-3.3 3 3 0 01-1.6-4.9 3 3 0 013.9-4.4A3 3 0 0110 1.2Z',
+  tige:'M7.6 2h4.8v16H7.6Z',
+  port:'M10 2c4 3.2 6 7.4 6 11.2 0 2.8-2.7 4.8-6 4.8s-6-2-6-4.8C4 9.4 6 5.2 10 2Z'
+};
+let cid = 0;
+// Trois états de trait (jamais vue, en cours, acquise) ; la photo remplit la forme.
+function icon(o, shot){
+  if (!shot) return `<svg viewBox="0 0 20 20" aria-hidden="true">${ICONS[o]}</svg>`;
+  const c = 'sh' + (cid++);
+  return `<svg viewBox="0 0 20 20" aria-hidden="true"><defs><clipPath id="${c}"><path d="${SHAPES[o]}"/></clipPath></defs>`
+    + `<image href="${shot}" x="0" y="0" width="20" height="20" preserveAspectRatio="xMidYMid slice" clip-path="url(#${c})"/>`
+    + `<path d="${SHAPES[o]}" fill="none" stroke="currentColor" stroke-width="1.6"/>`
+    + (o === 'silhouette' ? '<path d="M10 13.6V18" stroke="currentColor" stroke-width="1.6"/>' : '') + '</svg>';
+}
+
+/* ---------- Photos de l'utilisateur ---------- */
+const SEEN_SHOTS = new Set();
+const SHOT_PREFIX = 'quel-arbre-shot:';
+const SHOTS = {};
+function loadShots(){
+  try {
+    for (let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if (k && k.startsWith(SHOT_PREFIX)) SHOTS[k.slice(SHOT_PREFIX.length)] = localStorage.getItem(k);
+    }
+  } catch(e) {}
+}
+const shotOf = (sid, org) => SHOTS[`${sid}|${org}`];
+function resizeImage(file, max, q){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const r = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * r); cv.height = Math.round(img.height * r);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      res(cv.toDataURL('image/jpeg', q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('image illisible')); };
+    img.src = url;
+  });
+}
+async function saveShot(sid, org, file){
+  const key = `${sid}|${org}`;
+  const data = await resizeImage(file, 700, 0.7);
+  try { localStorage.setItem(SHOT_PREFIX + key, data); }
+  catch(e) { throw new Error('plein'); }
+  SHOTS[key] = data;
+  state.shots[key] = {date: Date.now()};
+  save(); checkWins();
+}
+function removeShot(key){
+  try { localStorage.removeItem(SHOT_PREFIX + key); } catch(e) {}
+  delete SHOTS[key]; delete state.shots[key]; save();
+}
+const shotCount = () => Object.keys(state.shots).length;
+const shotsOfSpecies = id => organsOf(id).filter(o => shotOf(id, o.id)).length;
+
+let PHOTOS = [];
+const FALLBACK = {};   // dessins gardés en réserve, par espèce et organe
+let failed = 0;        // images distantes qui n'ont pas pu être chargées
+let seed = 1;
+SPECIES.forEach(s => GROUPS[s.group].organs.map(o => ({id:o})).forEach(o => [0, 1].forEach(k => {
+  const [fn, bg] = DRAW[s.id][o.id];
+  const shade = k ? `color-mix(in srgb, ${bg} 85%, #7a8a70)` : bg;
+  const drawing = {id:`${s.id}-${o.id}-${k}`, species:s.id, organ:o.id, svg:frame(shade, fn(rng(seed++)), k === 1)};
+  PHOTOS.push(drawing);
+  if (!k) FALLBACK[`${s.id}|${o.id}`] = drawing.svg;
+})));
+let usingPhotos = false;
+
+/* ---------- Réglages de l'apprentissage ---------- */
+const MIN = 60e3, DAY = 864e5;
+const INTERVALS = [0, 2*MIN, 10*MIN, DAY, 3*DAY, 7*DAY, 21*DAY]; // par boîte
+const SESSION_LEN = 10;
+const RECALL_BOX = 3;   // à partir de cette boîte : question sans choix
+const UNLOCK_BOX = 2;   // toutes les cartes à ce niveau => nouvelle espèce
+const START_COUNT = 3;
+const KEY = 'quel-arbre-v2';
+
+/* ---------- État ---------- */
+function freshState(){
+  const first = SPECIES.slice(0, START_COUNT).map(s => s.id);
+  return {v:2, unlocked:first, intros:[...first], cards:{}, conf:{}, log:[], season:'auto', focus:'all', milieu:'tous', packs:['arbres'], dexFilter:'tous', dexSort:'ordre',
+    shots:{},
+    stats:{answers:0, correct:0, sessions:0, organ:{}, hist:[], days:[], recallOk:0, sosieRun:0, sosieBest:0, winter:false, free:0, duelOk:0, typeOk:0},
+    wins:{}};
+}
+let state = freshState();
+try { const s = localStorage.getItem(KEY); if (s) state = Object.assign(freshState(), JSON.parse(s)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+const st = () => state.stats;
+const MONTH = 30 * 864e5;
+// Une confusion ancienne pèse moins qu'une confusion d'hier : demi-vie d'un mois.
+const confEntry = v => (typeof v === 'number' ? {n:v, t:Date.now() - MONTH} : (v || {n:0, t:0}));
+function confWeight(v){
+  const e = confEntry(v);
+  if (!e.n) return 0;
+  return e.n * Math.pow(0.5, (Date.now() - e.t) / MONTH);
+}
+function organStat(o){ return st().organ[o] || (st().organ[o] = {a:0, c:0}); }
+function card(key){ return state.cards[key] || (state.cards[key] = {box:0, due:0, seen:0, last:null}); }
+
+/* ---------- Succès ---------- */
+// Des jalons d'apprentissage, pas des récompenses d'assiduité.
+const WINS = [
+  {id:'premiere', t:'Première planche', d:'Répondre à une planche.', test:() => st().answers >= 1},
+  {id:'cent', t:'Cent planches', d:'Cent réponses au compteur.', test:() => st().answers >= 100},
+  {id:'espece', t:'Une espèce en main', d:'Une espèce dont les quatre organes sont acquis.', test:() => SPECIES.some(x => state.unlocked.includes(x.id) && allCardsOf(x.id).length && allCardsOf(x.id).every(k => card(k).box >= UNLOCK_BOX))},
+  {id:'herbier', t:'Herbier complet', d:'Découvrir toutes les espèces des packs activés.', test:() => SPECIES.filter(x => state.packs.includes(x.pack)).every(x => state.unlocked.includes(x.id))},
+  {id:'deuxpacks', t:'Deux règnes', d:'Une espèce acquise dans deux packs différents.', test:() => new Set(SPECIES.filter(x => allCardsOf(x.id).length && allCardsOf(x.id).every(k => card(k).box >= UNLOCK_BOX)).map(x => x.pack)).size >= 2},
+  {id:'sosies', t:'Sosies démêlés', d:'Cinq bonnes réponses d\'affilée sur des espèces à sosie.', test:() => st().sosieBest >= 5},
+  {id:'ecorce', t:'L\'écorce sans les feuilles', d:'Dix écorces reconnues.', test:() => organStat('ecorce').c >= 10},
+  {id:'hiver', t:'Botaniste d\'hiver', d:'Terminer une session avec les indices d\'hiver.', test:() => st().winter},
+  {id:'rappel', t:'Sans filet', d:'Cinq noms retrouvés de mémoire, sans liste.', test:() => st().typeOk >= 5},
+  {id:'duel', t:'Face à face', d:'Dix duels entre sosies remportés.', test:() => st().duelOk >= 10},
+  {id:'longue', t:'Mémoire longue', d:'Une planche revue à trois semaines d\'intervalle.', test:() => Object.values(state.cards).some(c => c.box >= 5)},
+  {id:'photo1', t:'Première observation', d:'Photographier un organe sur le terrain.', test:() => shotCount() >= 1},
+  {id:'planche', t:'Planche complète', d:'Les quatre organes d\'une même espèce photographiés.', test:() => SPECIES.some(x => shotsOfSpecies(x.id) === organsOf(x.id).filter(o => photosOf(x.id, o.id).length).length && shotsOfSpecies(x.id) > 0)},
+  {id:'photo12', t:'Douze observations', d:'Douze photos dans ton carnet.', test:() => shotCount() >= 12},
+  {id:'dix', t:'Dix sessions', d:'Terminer dix sessions.', test:() => st().sessions >= 10}
+];
+function checkWins(){
+  const fresh = [];
+  WINS.forEach(w => { if (!state.wins[w.id] && w.test()){ state.wins[w.id] = Date.now(); fresh.push(w); } });
+  if (fresh.length) save();
+  return fresh;
+}
+
+/* ---------- Utilitaires ---------- */
+const $ = id => document.getElementById(id);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const photosOf = (sid, org) => PHOTOS.filter(p => p.species === sid && p.organ === org);
+const preloaded = new Set();
+function preload(p){
+  if (!p || !p.src || preloaded.has(p.src)) return;
+  preloaded.add(p.src);
+  const i = new Image(); i.src = p.src;
+}
+function preloadSoon(){
+  // garde d'avance les planches des espèces en cours de révision
+  activeCards().slice(0, 8).forEach(k => {
+    const [sid, org] = k.split('|');
+    photosOf(sid, org).slice(0, 2).forEach(preload);
+  });
+}
+const media = (p, eager) => p ? (p.svg || `<img src="${esc(p.src)}" alt="" loading="${eager ? 'eager' : 'lazy'}" decoding="async" data-k="${esc(p.species)}|${esc(p.organ)}" onerror="imgFailed(this)">`) : '';
+function imgFailed(img){
+  const tries = +(img.dataset.try || 0);
+  if (tries < 1){ // un simple hoquet de réseau mérite un second essai
+    img.dataset.try = tries + 1;
+    const src = img.getAttribute('src');
+    setTimeout(() => { img.src = ''; img.src = src; }, 700);
+    return;
+  }
+  failed++;
+  const draw = FALLBACK[img.dataset.k];
+  img.parentElement.innerHTML = draw
+    || '<div class="noimg">Image indisponible : connexion trop lente ou coupée</div>';
+}
+window.imgFailed = imgFailed;
+
+function season(){
+  if (state.season !== 'auto') return state.season;
+  return [10, 11, 0, 1, 2].includes(new Date().getMonth()) ? 'hiver' : 'ete';
+}
+function organAllowed(s, org){
+  if (!state.packs.includes(s.pack)) return false;
+  if (state.milieu !== 'tous' && !(s.milieux || []).includes(state.milieu)) return false;
+  if (state.focus !== 'all' && org !== state.focus) return false;
+  // En hiver, les feuillus ont perdu feuilles et fruits, et les fleurs ont disparu.
+  if (season() === 'hiver' && s.group === 'fleur') return false;
+  if (season() === 'hiver' && s.type === 'feuillu' && (org === 'feuille' || org === 'fruit')) return false;
+  return photosOf(s.id, org).length > 0;
+}
+function activeCards(){
+  return state.unlocked.filter(packOn).flatMap(id => organsOf(id).filter(o => organAllowed(sp(id), o.id)).map(o => `${id}|${o.id}`));
+}
+function allCardsOf(id){ return organsOf(id).filter(o => photosOf(id, o.id).length).map(o => `${id}|${o.id}`); }
+const packOn = id => state.packs.includes(sp(id).pack);
+const inBloom = (x, m) => !x.floraison || x.floraison.includes((m === undefined ? new Date().getMonth() + 1 : m));
+function mastery(id){ const ks = allCardsOf(id); return ks.reduce((a, k) => a + Math.min(card(k).box, 4), 0) / (ks.length * 4); }
+function unlockProgress(){
+  const ks = state.unlocked.filter(packOn).flatMap(allCardsOf);
+  return {done: ks.filter(k => card(k).box >= UNLOCK_BOX).length, total: ks.length};
+}
+function nextLocked(){ return SPECIES.find(s => !state.unlocked.includes(s.id) && state.packs.includes(s.pack)); }
+function tryUnlock(){
+  const p = unlockProgress(), next = nextLocked();
+  if (next && p.done === p.total){ state.unlocked.push(next.id); state.intros.push(next.id); save(); return next; }
+  return null;
+}
+
+/* ---------- Navigation ---------- */
+const VIEWS = ['home','herbier','progres','fiche','quiz','end','carnet','settings'];
+function openSheet(){ $('sheet').classList.add('on'); $('scrim').classList.add('on'); }
+function closeSheet(){ $('sheet').classList.remove('on'); $('scrim').classList.remove('on'); }
+function show(v){
+  VIEWS.forEach(x => $(x).hidden = x !== v);
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', b.dataset.v === v));
+  $('tabbar').hidden = ['quiz','fiche'].includes(v);
+  $('back').hidden = v !== 'fiche';
+  $('seasonChip').hidden = v !== 'home';
+  closeSheet();
+  window.scrollTo(0, 0);
+}
+addEventListener('scroll', () => $('topbar').classList.toggle('scrolled', scrollY > 6), {passive:true});
+
+/* ---------- Accueil ---------- */
+function marksFor(id){
+  return organsOf(id).filter(o => photosOf(id, o.id).length).map(o => {
+    const b = card(`${id}|${o.id}`).box, shot = shotOf(id, o.id);
+    const cls = (b >= UNLOCK_BOX ? 'known' : (b ? 'seen' : '')) + (shot ? ' shot' : '');
+    const label = `${o.label} : ${b >= UNLOCK_BOX ? 'acquise' : (b ? 'en cours' : 'jamais vue')}${shot ? ', photographiée' : ''}`;
+    if (shot && !SEEN_SHOTS.has(`${id}|${o.id}`)) SEEN_SHOTS.add(`${id}|${o.id}`);
+    return `<span class="m ${cls}" title="${label}">${icon(o.id, shot)}</span>`;
+  }).join('');
+}
+
+const ENTRY_ICONS = {
+  herbier:'<rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7c-3 2.5-3.6 6.5 0 9 3.6-2.5 3-6.5 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+  progres:'<path d="M4 20V9M10 20V4M16 20v-8M22 20H2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+  carnet:'<rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.5"/>'
+};
+const entryIcon = k => `<span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ENTRY_ICONS[k]}</svg></span>`;
+
+function renderHome(){
+  const p = unlockProgress(), next = nextLocked(), s = season(), now = Date.now();
+  const hero = pick(PHOTOS.filter(x => state.unlocked.includes(x.species)));
+  $('hero').innerHTML = `<div class="media">${media(hero)}</div>
+    <figcaption><span class="plate-name">${esc(sp(hero.species).fr)} <i class="sci">${esc(sp(hero.species).sci)}</i></span><span class="plate-organ">${organLabel(hero.organ).toLowerCase()}</span></figcaption>`;
+  $('seasonChip').textContent = s === 'hiver' ? 'indices d\'hiver' : 'belle saison';
+  const due = activeCards().filter(k => card(k).due <= now).length;
+  const known = SPECIES.filter(x => state.unlocked.includes(x.id) && mastery(x.id) >= 0.5).length;
+  $('entries').innerHTML = `
+    <li><button class="card" data-v="herbier">${entryIcon('herbier')}<span><span class="t">Herbier</span><span class="s">${state.unlocked.length} espèces sur ${SPECIES.length}, ${known} bien connues</span></span></button></li>
+    <li><button class="card" data-v="carnet">${entryIcon('carnet')}<span><span class="t">Carnet de terrain</span><span class="s">${shotCount() ? `${shotCount()} photo${shotCount() > 1 ? 's' : ''}` : 'aucune photo'}</span></span></button></li>
+    <li><button class="card" data-v="progres">${entryIcon('progres')}<span><span class="t">Progrès</span><span class="s">${st().answers} planches vues, ${Object.keys(state.wins).length} succès sur ${WINS.length}</span></span></button></li>`;
+  $('entries').querySelectorAll('button').forEach(b => b.onclick = () => goto(b.dataset.v));
+  const n = activeCards().length;
+  $('start').disabled = n === 0;
+  $('startInfo').textContent = n === 0
+    ? 'Aucune planche avec ces réglages'
+    : (due ? `${SESSION_LEN} planches · ${due} à revoir maintenant` : `${SESSION_LEN} planches · rien d'urgent, mais utile`);
+  const bits = [];
+  if (state.focus !== 'all') bits.push(`${organLabel(state.focus).toLowerCase()} seulement`);
+  if (state.milieu !== 'tous') bits.push(MILIEUX.find(m => m.id === state.milieu).label.toLowerCase());
+  if (state.packs.length < PACKS.length) bits.push(PACKS.filter(p => state.packs.includes(p.id)).map(p => p.label.toLowerCase()).join(' et '));
+  $('homeInfo').textContent = bits.length ? `Entraînement : ${bits.join(', ')}.` : '';
+  $('homeInfo').hidden = !bits.length;
+  $('unlockInfo').textContent = next
+    ? `Espèce suivante : ${p.done} planches sur ${p.total} acquises.`
+    : 'Les cinq espèces du prototype sont débloquées.';
+  $('sourceInfo').textContent = usingPhotos ? 'Photos iNaturalist.' : 'Prototype : dessins en attendant les photos.';
+}
+
+const DEX_FILTERS = [
+  {id:'tous', label:'Toutes'},
+  {id:'arbre', label:'Arbres'},
+  {id:'fleur', label:'Fleurs'},
+  {id:'revoir', label:'À revoir'},
+  {id:'maintenant', label:'Fleurit maintenant'}
+];
+function dexMatch(x){
+  if (!state.packs.includes(x.pack)) return false;
+  if (state.dexFilter === 'tous') return true;
+  if (state.dexFilter === 'revoir'){
+    const now = Date.now();
+    return state.unlocked.includes(x.id) && allCardsOf(x.id).some(k => card(k).seen && card(k).due <= now);
+  }
+  if (state.dexFilter === 'maintenant') return x.group === 'fleur' && inBloom(x);
+  return x.group === state.dexFilter;
+}
+function renderHerbier(){
+  const inPacks = SPECIES.filter(x => state.packs.includes(x.pack));
+  const found = state.unlocked.filter(packOn).length;
+  $('dexCount').textContent = `${found} espèce${found > 1 ? 's' : ''} découverte${found > 1 ? 's' : ''} sur ${inPacks.length}. Touche une planche pour sa fiche.`;
+  $('dexLegend').innerHTML = `<span>${icon('feuille', null)}jamais vue</span><span class="seen">${icon('ecorce', null)}en cours</span><span class="known">${icon('fruit', null)}acquise</span><span class="known">${icon('fleur', SHOTS[Object.keys(state.shots)[0]] || null)}ta photo</span>`;
+  $('dexFilters').innerHTML = DEX_FILTERS.map(f => `<button data-f="${f.id}" aria-pressed="${state.dexFilter === f.id}">${f.label}</button>`).join('');
+  $('dexFilters').querySelectorAll('button').forEach(b => b.onclick = () => { state.dexFilter = b.dataset.f; save(); renderHerbier(); });
+  $('dexSort').value = state.dexSort;
+  let list = SPECIES.filter(dexMatch);
+  if (state.dexSort === 'alpha') list = [...list].sort((a, b) => a.fr.localeCompare(b.fr, 'fr'));
+  if (state.dexSort === 'progres') list = [...list].sort((a, b) => (state.unlocked.includes(b.id) ? mastery(b.id) : -1) - (state.unlocked.includes(a.id) ? mastery(a.id) : -1));
+  if (!list.length){ $('dex').innerHTML = '<p class="empty">Rien ici pour l\'instant.</p>'; return; }
+  $('dex').innerHTML = list.map(x => {
+    const main = x.group === 'fleur' ? ['fleur','port','feuille'] : ['silhouette','feuille'];
+    const mine = main.map(o => shotOf(x.id, o)).find(Boolean);
+    const ph = mine ? {src: mine} : main.map(o => photosOf(x.id, o)[0]).find(Boolean);
+    if (!state.unlocked.includes(x.id)) return `<div><figure class="plate unknown"><div class="media">${media(ph)}</div>
+      <figcaption><span class="plate-name">Espèce à découvrir</span></figcaption></figure></div>`;
+    return `<div><button data-id="${x.id}"><figure class="plate"><div class="media">${media(ph)}</div>
+      <figcaption><span class="plate-name">${esc(x.fr)}</span><span class="sci">${esc(x.sci)}</span>
+      <span class="marks">${marksFor(x.id)}</span></figcaption></figure></button></div>`;
+  }).join('');
+  $('dex').querySelectorAll('button[data-id]').forEach(b => b.onclick = () => openFiche(b.dataset.id, false));
+}
+$('dexSort').onchange = e => { state.dexSort = e.target.value; save(); renderHerbier(); };
+
+/* ---------- Fiche espèce ---------- */
+let ficheFromIntro = false, backTo = 'home';
+function openFiche(id, fromIntro){
+  ficheFromIntro = fromIntro;
+  // ne recalcule la vue de retour qu'en arrivant sur la fiche, pas à chaque rafraîchissement
+  if (!fromIntro && $('fiche').hidden) backTo = !$('herbier').hidden ? 'herbier' : (!$('carnet').hidden ? 'carnet' : 'home');
+  const x = sp(id);
+  const twins = x.sosies.map(sp).map(t => t.fr);
+  const d = x.dex;
+  $('fiche').querySelector('.inner').innerHTML = `
+    ${fromIntro ? '<p class="kicker">Nouvelle espèce</p>' : ''}
+    <h2>${esc(x.fr)}</h2><p class="sci">${esc(x.sci)}, ${x.group === 'fleur' ? 'fleur' : (x.type === 'conifere' ? 'conifère' : 'feuillu')}${x.floraison ? ` · floraison de ${MOIS[x.floraison[0] - 1]} à ${MOIS[x.floraison[x.floraison.length - 1] - 1]}` : ''}</p>
+    ${x.intro ? `<p>${esc(x.intro)}</p>` : ''}
+    ${twins.length ? `<p class="warn">Attention au sosie : ${esc(twins.join(', '))}.</p>` : ''}
+    ${x.toxique ? `<p class="toxbox"><b>Toxique</b>${esc(x.toxique)}</p>` : ''}
+    ${d ? `<details class="id"${fromIntro ? ' open' : ''}><summary>Carte d'identité</summary>
+    <dl class="idcard">
+      <div><dt>Hauteur</dt><dd>${esc(d.taille)}</dd></div>
+      <div><dt>Longévité</dt><dd>${esc(d.age)}</dd></div>
+      <div><dt>Où il pousse</dt><dd>${esc(d.milieu)}</dd></div>
+      <div><dt>Altitude</dt><dd>${esc(d.alt)}</dd></div>
+      <div><dt>Son bois</dt><dd>${esc(d.bois)}</dd></div>
+      <div><dt>En Suisse</dt><dd>${esc(d.suisse)}</dd></div>
+    </dl></details>` : ''}
+    ${x.fait ? `<p class="fact"><b>À retenir</b>${esc(x.fait)}</p>` : ''}
+    ${x.terrain ? `<p class="fact"><b>Sur le terrain</b>${esc(x.terrain)}</p>` : ''}
+    ${x.imported ? '<p class="muted">Espèce arrivée avec tes photos : sa fiche reste à écrire.</p>' : ''}
+    ${organsOf(id).filter(o => photosOf(id, o.id).length).map(o => {
+      const shot = shotOf(id, o.id), meta = state.shots[`${id}|${o.id}`];
+      return `<div class="orgblock">
+        <h3>${icon(o.id, shot)}${o.label}</h3><p>${esc(x.tips[o.id])}</p>
+        <div class="pair">
+          <figure class="plate"><div class="media">${media(photosOf(id, o.id)[0])}</div>
+            <figcaption><span>référence</span></figcaption></figure>
+          ${shot ? `<div><figure class="plate"><div class="media"><img src="${shot}" alt="Ma photo"></div>
+              <figcaption><span>ma photo</span><span>${meta ? new Date(meta.date).toLocaleDateString('fr-CH') : ''}</span></figcaption></figure>
+              <div class="shotacts"><button class="link" data-replace="${o.id}">Remplacer</button><button class="link" data-del="${o.id}">Retirer</button></div></div>`
+            : `<button class="addshot" data-add="${o.id}">${icon(o.id, null)}Ajouter ma photo</button>`}
+        </div></div>`;
+    }).join('')}
+    <p class="warnbox" id="shotMsg" hidden></p>
+    <input type="file" id="shotInput" accept="image/*" capture="environment" hidden>
+    <button class="primary" id="ficheOk">${fromIntro ? 'Compris' : 'Retour'}</button>`;
+
+  let pending = null;
+  const inp = $('shotInput');
+  $('fiche').querySelectorAll('[data-add],[data-replace]').forEach(b => b.onclick = () => {
+    pending = b.dataset.add || b.dataset.replace; inp.value = ''; inp.click();
+  });
+  $('fiche').querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+    removeShot(`${id}|${b.dataset.del}`); openFiche(id, fromIntro);
+  });
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0];
+    if (!f || !pending) return;
+    try { await saveShot(id, pending, f); openFiche(id, fromIntro); }
+    catch(e) {
+      $('shotMsg').hidden = false;
+      $('shotMsg').textContent = e.message === 'plein'
+        ? "La mémoire du navigateur est pleine. Retire quelques photos du carnet pour en ajouter d'autres."
+        : "Cette image n'a pas pu être lue. Essaie une autre photo.";
+    }
+  };
+  $('ficheOk').onclick = () => {
+    if (ficheFromIntro){ state.intros = state.intros.filter(i => i !== id); save(); startSession(); }
+    else { goto(backTo); }
+  };
+  show('fiche');
+}
+
+/* ---------- Session ---------- */
+let S = null, Q = null;
+function startSession(){
+  if (state.intros.length) return openFiche(state.intros[0], true);
+  S = {i:0, ok:0, retry:[], lastSp:null, confusions:[], wins:[], seen:new Set()};
+  const today = new Date().toISOString().slice(0, 10);
+  if (!st().days.includes(today)) st().days.push(today);
+  show('quiz'); ask();
+}
+
+function pickCard(){
+  S.retry.forEach(r => r.wait--);
+  const ri = S.retry.findIndex(r => r.wait <= 0 && r.key.split('|')[0] !== S.lastSp);
+  if (ri >= 0) return S.retry.splice(ri, 1)[0].key;
+  const keys = activeCards();
+  let pool = keys.filter(k => k.split('|')[0] !== S.lastSp);
+  if (!pool.length) pool = keys;
+  const now = Date.now();
+  const due = pool.filter(k => card(k).due <= now);
+  const list = shuffle([...(due.length ? due : pool)]).sort((a, b) => (card(a).due - card(b).due) || (card(a).box - card(b).box));
+  return list[Math.floor(Math.random() * Math.min(3, list.length))];
+}
+
+function buildOptions(sid){
+  const n = Math.min(4, state.unlocked.length);
+  const others = state.unlocked.filter(x => x !== sid);
+  const chosen = [];
+  const add = x => { if (others.includes(x) && !chosen.includes(x) && chosen.length < n - 1) chosen.push(x); };
+  sp(sid).sosies.forEach(add);
+  Object.entries(state.conf[sid] || {}).map(([x, v]) => [x, confWeight(v)]).filter(e => e[1] >= 0.25)
+    .sort((a, b) => b[1] - a[1]).forEach(([x]) => add(x));
+  shuffle([...others]).forEach(add);
+  return shuffle([sid, ...chosen]);
+}
+
+const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+function levenshtein(a, b){
+  const m = [];
+  for (let i = 0; i <= b.length; i++) m[i] = [i];
+  for (let j = 0; j <= a.length; j++) m[0][j] = j;
+  for (let i = 1; i <= b.length; i++) for (let j = 1; j <= a.length; j++)
+    m[i][j] = b[i-1] === a[j-1] ? m[i-1][j-1] : Math.min(m[i-1][j-1] + 1, m[i][j-1] + 1, m[i-1][j] + 1);
+  return m[b.length][a.length];
+}
+// Tolérant aux fautes et aux noms partiels : « sapin » vaut « sapin blanc ».
+function matchSpecies(text){
+  const t = norm(text);
+  if (t.length < 3) return null;
+  let best = null, bestD = 99;
+  state.unlocked.filter(packOn).forEach(id => {
+    [sp(id).fr, sp(id).sci, sp(id).fr.split(' ')[0]].forEach(cand => {
+      const c = norm(cand), d = levenshtein(t, c);
+      const tol = c.length <= 6 ? 1 : (c.length <= 11 ? 2 : 3);
+      if (d <= tol && d < bestD){ best = id; bestD = d; }
+    });
+  });
+  return best;
+}
+
+function plateHtml(p, cap){
+  return `<figure class="plate"><div class="media">${media(p, true)}</div>
+    <figcaption><span class="plate-organ">${esc(cap)}</span></figcaption></figure>`;
+}
+
+function chooseMode(sid, org, c){
+  const sos = sp(sid).sosies.filter(x => state.unlocked.includes(x) && packOn(x) && photosOf(x, org).length);
+  const others = organsOf(sid).filter(o => o.id !== org && photosOf(sid, o.id).length && organAllowed(sp(sid), o.id));
+  if (c.box >= RECALL_BOX && state.unlocked.filter(packOn).length >= 4) return {mode:'saisie'};
+  if (sos.length && c.box >= 1 && Math.random() < 0.4) return {mode:'duel', rival: pick(sos)};
+  if (c.box >= 2 && others.length && Math.random() < 0.3) return {mode:'combo', second: pick(others).id};
+  return {mode:'qcm'};
+}
+
+function ask(){
+  if (S.i >= SESSION_LEN || !activeCards().length) return endSession();
+  const key = pickCard();
+  const [sid, org] = key.split('|');
+  const c = card(key);
+  let ph = photosOf(sid, org).filter(p => p.id !== c.last);
+  if (!ph.length) ph = photosOf(sid, org);
+  const m = chooseMode(sid, org, c);
+  Q = {key, sid, org, photo: pick(ph), recall: m.mode === 'saisie', ...m};
+  $('track').innerHTML = Array.from({length: SESSION_LEN}, (_, i) => `<i class="${i < S.i ? 'done' : (i === S.i ? 'now' : '')}"></i>`).join('');
+  const count = `planche ${S.i + 1} sur ${SESSION_LEN}`;
+  $('choices').className = 'choices';
+  $('choices').innerHTML = '';
+  $('typebox').hidden = true;
+  preload(Q.photo);
+  $('qCredit').innerHTML = Q.photo.attribution ? `${esc(Q.photo.attribution)} · <a href="${esc(Q.photo.obs)}" target="_blank" rel="noopener">iNaturalist</a>` : '';
+
+  if (Q.mode === 'duel'){
+    const rivalPhoto = pick(photosOf(Q.rival, org));
+    Q.duel = shuffle([{id:sid, p:Q.photo}, {id:Q.rival, p:rivalPhoto}]);
+    $('qstage').innerHTML = `<div class="duel">${Q.duel.map((d, i) => `<button data-i="${i}">
+      <span class="tag">${i ? 'B' : 'A'}</span>${plateHtml(d.p, organLabel(org).toLowerCase())}</button>`).join('')}</div>`;
+    $('qstage').querySelectorAll('button').forEach(b => b.onclick = () => answer(Q.duel[+b.dataset.i].id));
+    $('qText').textContent = `Lequel est ${sp(sid).art + sp(sid).fr.toLowerCase()} ?`;
+  } else if (Q.mode === 'combo'){
+    const p2 = pick(photosOf(sid, Q.second));
+    Q.photo2 = p2;
+    $('qstage').innerHTML = `<div class="duel">${plateHtml(Q.photo, organLabel(org).toLowerCase())}${plateHtml(p2, organLabel(Q.second).toLowerCase())}</div>
+      <p class="hintline">${count} · deux indices du même arbre</p>`;
+    $('qText').textContent = 'De quel arbre s\'agit-il ?';
+    renderChoices(buildOptions(sid), false);
+  } else {
+    $('qstage').innerHTML = `<figure class="plate" id="qplate"><div class="media" id="qImg">${media(Q.photo, true)}</div>
+      <figcaption><span class="plate-organ">${organLabel(org)}</span><span>${count}</span></figcaption></figure>`;
+    if (Q.mode === 'saisie'){
+      $('qText').textContent = 'Sans liste : quel est son nom ?';
+      $('typebox').hidden = false;
+      $('typein').value = '';
+      $('typein').focus({preventScroll:true});
+    } else {
+      $('qText').textContent = 'De quel arbre s\'agit-il ?';
+      renderChoices(buildOptions(sid), false);
+    }
+  }
+  closeSheet();
+  setTimeout(preloadSoon, 400);
+}
+
+function renderChoices(opts, recall){
+  $('choices').className = 'choices' + (recall ? ' recall' : '');
+  $('choices').innerHTML = '';
+  opts.forEach(id => {
+    const b = document.createElement('button');
+    b.className = 'choice'; b.dataset.sp = id;
+    b.innerHTML = recall ? esc(sp(id).fr) : `${esc(sp(id).fr)}<i>${esc(sp(id).sci)}</i>`;
+    b.onclick = () => answer(id);
+    $('choices').appendChild(b);
+  });
+}
+
+function answer(chosen){
+  const ok = chosen === Q.sid, c = card(Q.key);
+  const wasBox = c.box;
+  c.seen++; c.last = Q.photo.id;
+  const wasDue = c.due <= Date.now();
+  st().answers++;
+  const os = organStat(Q.org); os.a++;
+  if (ok){
+    st().correct++; os.c++;
+    if (Q.recall) st().recallOk++;
+  }
+  if (sp(Q.sid).sosies.length && sp(chosen)){
+    st().sosieRun = ok ? st().sosieRun + 1 : 0;
+    st().sosieBest = Math.max(st().sosieBest, st().sosieRun);
+  }
+  // Une révision en avance entraîne, mais ne fait pas progresser le calendrier.
+  if (ok){
+    if (wasDue){ c.box = Math.min(c.box + 1, INTERVALS.length - 1); c.due = Date.now() + INTERVALS[c.box]; }
+    else st().free++;
+  } else {
+    c.box = 1;
+    c.due = Date.now() + INTERVALS[1];
+    if (sp(chosen)){
+      const m = state.conf[Q.sid] || (state.conf[Q.sid] = {});
+      m[chosen] = {n: confWeight(m[chosen]) + 1, t: Date.now()};
+    }
+    S.retry.push({key:Q.key, wait:3});
+    if (sp(chosen)) S.confusions.push([Q.sid, chosen]);
+  }
+  S.i++; if (ok) S.ok++; S.lastSp = Q.sid;
+  S.wins.push(...checkWins());
+  save();
+
+  if (Q.mode === 'duel'){
+    $('qstage').querySelectorAll('button').forEach((b, i) => {
+      b.disabled = true;
+      b.querySelector('.plate').classList.add(Q.duel[i].id === Q.sid ? 'good' : 'bad');
+    });
+    if (ok) st().duelOk++;
+  } else if (Q.mode === 'saisie'){
+    $('typebox').hidden = true;
+    if (ok) st().typeOk++;
+  } else {
+    $('choices').querySelectorAll('.choice').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.sp === Q.sid) b.classList.add('good');
+      else if (b.dataset.sp === chosen) b.classList.add('bad');
+    });
+  }
+  const right = sp(Q.sid);
+  const levelled = wasBox < UNLOCK_BOX && c.box >= UNLOCK_BOX;
+  const early = ok && !wasDue;
+  const first = !S.seen.has(Q.sid);
+  S.seen.add(Q.sid);
+  const factHtml = (first && right.fait) ? `<p class="fact"><b>Le saviez-vous</b>${esc(right.fait)}</p>` : '';
+  const toxHtml = right.toxique ? `<p class="toxbox"><b>Toxique</b>${esc(right.toxique)}</p>` : '';
+  const levelHtml = levelled
+    ? `<p class="levelup"><span class="m known">${icon(Q.org, shotOf(Q.sid, Q.org))}</span>${organLabel(Q.org)} du ${esc(right.fr.toLowerCase())} : marque acquise.</p>`
+    : '';
+  if (ok){
+    $('feedback').innerHTML = `<p class="verdict good"><span class="seal">✓</span>Oui, c'est ${esc(right.art + right.fr.toLowerCase())}.</p><p>${esc(tipOf(right, Q.org))}</p>${toxHtml}${factHtml}${levelHtml}${early ? '<p class="hintline">Révision en avance : elle t\'entraîne, mais ne décale pas la prochaine.</p>' : ''}`;
+  } else {
+    const wrong = sp(chosen), wp = wrong ? photosOf(chosen, Q.org)[0] : null;
+    $('feedback').innerHTML = `<p class="verdict bad"><span class="seal">✕</span>${chosen === '__rien__' ? 'C\'était' : 'Non, c\'était'} ${esc(right.art + right.fr.toLowerCase())}.</p>
+      <div class="compare">
+        <div><figure class="plate"><div class="media">${media(Q.photo)}</div></figure><h3>${esc(right.fr)}</h3><p>${esc(tipOf(right, Q.org))}</p></div>
+        ${wrong ? `<div><figure class="plate"><div class="media">${media(wp)}</div></figure><h3>${esc(wrong.fr)} <span>ta réponse</span></h3><p>${esc(tipOf(wrong, Q.org))}</p></div>` : ''}
+      </div>${(right.toxique || (wrong && wrong.toxique)) ? `<p class="toxbox"><b>Toxique</b>${esc(right.toxique || wrong.toxique)}</p>` : ''}${factHtml}${levelHtml}`;
+  }
+  $('next').textContent = S.i >= SESSION_LEN ? 'Voir le bilan' : 'Planche suivante';
+  openSheet();
+}
+
+function endSession(){
+  if (S.i){
+    st().sessions++;
+    st().hist.push({d:Date.now(), ok:S.ok, n:S.i});
+    if (st().hist.length > 20) st().hist.shift();
+    if (season() === 'hiver' && S.i >= SESSION_LEN) st().winter = true;
+  }
+  const unlocked = tryUnlock();
+  S.wins.push(...checkWins());
+  save();
+  const counts = {};
+  S.confusions.forEach(([a, b]) => { const k = `${a}|${b}`; counts[k] = (counts[k] || 0) + 1; });
+  const conf = Object.entries(counts).sort((x, y) => y[1] - x[1]);
+  let d = 0;
+  const delay = () => `style="animation-delay:${(d += 90)}ms"`;
+  $('endBody').innerHTML = `
+    <div class="card endcard reveal" style="animation-delay:0ms">
+      <p class="big" id="endScore">0</p>
+      <p class="sub">planches reconnues sur ${S.i}</p>
+    </div>
+    ${unlocked ? `<p class="fact reveal" ${delay()}><b>Nouvelle espèce</b>${esc(unlocked.fr)} rejoint ton herbier. Sa fiche ouvre la prochaine session.</p>` : ''}
+    ${S.wins.length ? S.wins.map(w => `<div class="winline reveal" ${delay()}><span class="seal">✓</span><span><b>${esc(w.t)}</b><br><span class="muted">${esc(w.d)}</span></span></div>`).join('') : ''}
+    <div class="reveal" ${delay()}>
+      ${conf.length ? `<h3>À retravailler</h3><ul class="plain">${conf.map(([k, n]) => { const [a, b] = k.split('|'); return `<li>${esc(sp(a).fr)} pris pour ${esc(sp(b).fr)}${n > 1 ? ` (${n} fois)` : ''}</li>`; }).join('')}</ul>
+        <p class="muted">Ces paires reviendront plus souvent ensemble.</p>` : '<p class="muted">Aucune confusion pendant cette session.</p>'}
+    </div>`;
+  show('end');
+  countUp($('endScore'), S.ok);
+}
+function countUp(el, to){
+  if (!to || matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = to; return; }
+  let i = 0;
+  const step = () => { el.textContent = ++i; if (i < to) setTimeout(step, Math.max(60, 420 / to)); };
+  setTimeout(step, 180);
+}
+
+/* ---------- Progrès ---------- */
+function renderProgres(){
+  const a = st(), rate = a.answers ? Math.round(a.correct / a.answers * 100) : 0;
+  const organs = ORGANS.filter(o => (a.organ[o.id] || {}).a || SPECIES.some(x => state.packs.includes(x.pack) && GROUPS[x.group].organs.includes(o.id))).map(o => {
+    const x = a.organ[o.id] || {a:0, c:0};
+    return `<div class="barline"><span>${o.label}</span><span class="b"><i style="width:${x.a ? x.c / x.a * 100 : 0}%"></i></span><span class="v">${x.a ? Math.round(x.c / x.a * 100) + ' %' : '–'}</span></div>`;
+  }).join('');
+  const hist = a.hist.length
+    ? `<div class="hist">${a.hist.map(h => { const r = h.ok / h.n; return `<i class="${r < 0.6 ? 'low' : ''}" style="height:${Math.max(4, r * 100)}%" title="${h.ok}/${h.n}"></i>`; }).join('')}</div>
+       <p class="muted">Réussite des ${a.hist.length} dernière${a.hist.length > 1 ? 's' : ''} session${a.hist.length > 1 ? 's' : ''}, de la plus ancienne à la plus récente.</p>`
+    : '<p class="muted">Les sessions terminées apparaîtront ici.</p>';
+  const pairs = [];
+  Object.entries(state.conf).forEach(([x, m]) => Object.entries(m).forEach(([y, v]) => {
+    const w = confWeight(v);
+    if (w >= 0.25) pairs.push([x, y, w]);
+  }));
+  pairs.sort((p, q) => q[2] - p[2]);
+  const conf = pairs.length
+    ? `<ul class="plain">${pairs.slice(0, 4).map(([x, y, n]) => `<li>${esc(sp(x).fr)} pris pour ${esc(sp(y).fr)} — poids ${n.toFixed(1)}</li>`).join('')}</ul>
+      <p class="muted">Les confusions anciennes comptent de moins en moins.</p>`
+    : '<p class="muted">Aucune confusion enregistrée.</p>';
+  const wins = WINS.map(w => {
+    const when = state.wins[w.id];
+    return `<li class="${when ? 'done' : ''}"><span class="seal">${when ? '✓' : '·'}</span>
+      <span><span class="t">${esc(w.t)}</span><br><span class="d">${esc(w.d)}</span>
+      ${when ? `<br><span class="when">obtenu le ${new Date(when).toLocaleDateString('fr-CH')}</span>` : ''}</span></li>`;
+  }).join('');
+  $('progresBody').innerHTML = `
+    <div class="stats">
+      <span class="stat card"><b>${a.answers}</b><span>planches vues</span></span>
+      <span class="stat card"><b>${rate} %</b><span>de réussite</span></span>
+      <span class="stat card"><b>${shotCount()}</b><span>organes photographiés</span></span>
+    </div>
+    <h3>Par organe</h3><div class="bars">${organs}</div>
+    <h3>Sessions</h3>${hist}
+    <h3>Confusions les plus fréquentes</h3>${conf}
+    <h3>Succès</h3><ul class="wins">${wins}</ul>`;
+}
+
+/* ---------- Carnet ---------- */
+function renderCarnet(){
+  const items = Object.entries(state.shots).map(([k, v]) => {
+    const [sid, org] = k.split('|');
+    return {k, sid, org, date: v.date};
+  }).filter(i => sp(i.sid) && SHOTS[i.k]).sort((a, b) => b.date - a.date);
+  const done = SPECIES.filter(x => shotsOfSpecies(x.id) > 0 && shotsOfSpecies(x.id) === organsOf(x.id).filter(o => photosOf(x.id, o.id).length).length).length;
+  if (!items.length){
+    $('carnetBody').innerHTML = `<p class="empty">Rien encore. Ouvre la fiche d'une espèce dans l'herbier et ajoute ta photo de sa feuille, de son écorce, de ses fruits ou de sa silhouette. Chaque photo remplace le dessin dans ta marque d'organe.</p>`;
+    return;
+  }
+  $('carnetBody').innerHTML = `<p class="muted">${items.length} photo${items.length > 1 ? 's' : ''}${done ? `, ${done} planche${done > 1 ? 's' : ''} complète${done > 1 ? 's' : ''}` : ''}.</p>
+    <div class="gallery">${items.map(i => `<div><figure class="plate"><div class="media"><img src="${SHOTS[i.k]}" alt=""></div>
+      <figcaption><span class="plate-name">${esc(sp(i.sid).fr)}</span><span>${organLabel(i.org).toLowerCase()}</span>
+      <span class="date">${new Date(i.date).toLocaleDateString('fr-CH')}</span></figcaption></figure>
+      <div class="shotacts"><button class="link" data-open="${i.sid}">Fiche</button><button class="link" data-k="${i.k}">Retirer</button></div></div>`).join('')}</div>`;
+  $('carnetBody').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { removeShot(b.dataset.k); renderCarnet(); });
+  $('carnetBody').querySelectorAll('[data-open]').forEach(b => b.onclick = () => openFiche(b.dataset.open, false));
+}
+
+/* ---------- Réglages ---------- */
+// Un organe qui n'existe plus dans les packs actifs ne peut pas rester sélectionné.
+function checkFocus(){
+  if (state.focus === 'all') return;
+  const ok = SPECIES.some(x => state.packs.includes(x.pack) && GROUPS[x.group].organs.includes(state.focus) && photosOf(x.id, state.focus).length);
+  if (!ok) state.focus = 'all';
+}
+function renderSettings(){
+  $('packs').innerHTML = PACKS.map(p => {
+    const n = SPECIES.filter(x => x.pack === p.id).length;
+    return `<label class="check"><input type="checkbox" data-pack="${p.id}" ${state.packs.includes(p.id) ? 'checked' : ''}><span><b>${p.label}</b><br><span class="muted">${n} espèces</span></span></label>`;
+  }).join('');
+  $('packs').querySelectorAll('input').forEach(c => c.onchange = () => {
+    const id = c.dataset.pack;
+    state.packs = c.checked ? [...new Set([...state.packs, id])] : state.packs.filter(p => p !== id);
+    if (!state.packs.length) state.packs = [id], c.checked = true;
+    // toute nouvelle espèce d'un pack activé démarre par sa fiche
+    const first = SPECIES.filter(x => state.packs.includes(x.pack) && !state.unlocked.includes(x.id)).slice(0, 1);
+    if (state.unlocked.filter(packOn).length === 0 && first.length){ state.unlocked.push(first[0].id); state.intros.push(first[0].id); }
+    checkFocus(); save(); renderSettings();
+  });
+  $('setMilieu').innerHTML = MILIEUX.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
+  $('setMilieu').value = state.milieu;
+  $('setSeason').value = state.season;
+  const usable = ORGANS.filter(o => SPECIES.some(x => state.packs.includes(x.pack) && GROUPS[x.group].organs.includes(o.id) && photosOf(x.id, o.id).length));
+  if (state.focus !== 'all' && !usable.some(o => o.id === state.focus)){ state.focus = 'all'; save(); }
+  $('setFocus').innerHTML = '<option value="all">Tout mélangé, recommandé</option>'
+    + usable.map(o => `<option value="${o.id}">${o.label} uniquement</option>`).join('');
+  $('setFocus').value = state.focus;
+  const nphotos = PHOTOS.filter(p => p.src).length;
+  $('loadInfo').textContent = usingPhotos
+    ? `${nphotos} planches photo chargées depuis arbres.json.` + (failed ? ` ${failed} images n'ont pas pu être affichées : vérifie ta connexion ou un éventuel bloqueur.` : '')
+    : "Aucun arbres.json lu : l'app tourne sur mes dessins. Le fichier doit être à côté d'index.html, et la page servie par GitHub Pages, pas ouverte depuis les fichiers du téléphone.";
+  const credited = PHOTOS.filter(p => p.attribution);
+  $('credits').innerHTML = credited.length ? credited.map(p => `<li>${esc(sp(p.species).fr)} : ${esc(p.attribution)} (<a href="${esc(p.obs)}" target="_blank" rel="noopener">source</a>)</li>`).join('') : '<li class="muted">Dessins du prototype. Les crédits iNaturalist apparaîtront ici dès que les photos seront chargées.</li>';
+}
+$('setSeason').onchange = e => { state.season = e.target.value; save(); };
+$('setFocus').onchange = e => { state.focus = e.target.value; save(); };
+$('setMilieu').onchange = e => { state.milieu = e.target.value; save(); };
+$('unlockAll').onclick = () => {
+  SPECIES.filter(x => state.packs.includes(x.pack)).forEach(x => { if (!state.unlocked.includes(x.id)){ state.unlocked.push(x.id); state.intros.push(x.id); } });
+  save(); $('setMsg').textContent = 'Toutes les espèces sont débloquées.';
+};
+$('reset').onclick = () => {
+  if (!confirm('Effacer toute la progression et le carnet ?')) return;
+  state = freshState(); save(); $('setMsg').textContent = 'Progression effacée.';
+};
+
+/* ---------- Liaisons ---------- */
+function goto(v){
+  if (v === 'home') renderHome();
+  if (v === 'herbier') renderHerbier();
+  if (v === 'progres') renderProgres();
+  if (v === 'carnet') renderCarnet();
+  if (v === 'settings') renderSettings();
+  show(v);
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => goto(b.dataset.v));
+$('start').onclick = startSession;
+$('next').onclick = () => { closeSheet(); setTimeout(ask, 170); };
+$('scrim').onclick = () => $('next').click();
+function submitType(){
+  if ($('typebox').hidden) return;
+  const guess = matchSpecies($('typein').value);
+  answer(guess || '__rien__');
+}
+$('typeok').onclick = submitType;
+$('typeno').onclick = () => { if (!$('typebox').hidden) answer('__rien__'); };
+$('typein').onkeydown = e => { if (e.key === 'Enter'){ e.preventDefault(); submitType(); } };
+$('back').onclick = () => goto(backTo);
+$('quit').onclick = () => goto('home');
+$('again').onclick = startSession;
+$('backHome').onclick = () => goto('home');
+
+/* ---------- Export et import ---------- */
+function buildBackup(){
+  return {app:'quel-arbre', v:1, date:new Date().toISOString(), state, shots:{...SHOTS}};
+}
+async function exportData(){
+  const json = JSON.stringify(buildBackup());
+  const filename = `quel-arbre-${new Date().toISOString().slice(0, 10)}.json`;
+  const size = (json.length / 1048576).toFixed(1);
+  try {
+    // Dans une page publiée sur claude.ai, l'enregistrement passe par le lecteur.
+    const dl = window.claude && await window.claude.use('downloads');
+    if (dl){ await dl.save({filename, data: json}); $('ioMsg').textContent = `Fichier proposé (${size} Mo).`; return; }
+  } catch(e) {}
+  try {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], {type:'application/json'}));
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    $('ioMsg').textContent = `Fichier téléchargé (${size} Mo).`;
+  } catch(e) { $('ioMsg').textContent = "L'export a échoué sur ce navigateur."; }
+}
+async function importData(file){
+  let data;
+  try { data = JSON.parse(await file.text()); }
+  catch(e) { $('ioMsg').textContent = 'Fichier illisible.'; return; }
+  if (data.app !== 'quel-arbre' || !data.state){ $('ioMsg').textContent = "Ce fichier ne vient pas de l'app."; return; }
+  if (!confirm('Remplacer la progression et les photos de cet appareil par le contenu du fichier ?')) return;
+  state = Object.assign(freshState(), data.state);
+  let kept = 0, lost = 0;
+  Object.keys(SHOTS).forEach(k => { try { localStorage.removeItem(SHOT_PREFIX + k); } catch(e) {} delete SHOTS[k]; });
+  Object.entries(data.shots || {}).forEach(([k, v]) => {
+    try { localStorage.setItem(SHOT_PREFIX + k, v); SHOTS[k] = v; kept++; }
+    catch(e) { delete state.shots[k]; lost++; }
+  });
+  save();
+  $('ioMsg').textContent = lost
+    ? `Progression restaurée, ${kept} photos sur ${kept + lost} : la mémoire du navigateur est pleine.`
+    : `Progression et ${kept} photo${kept > 1 ? 's' : ''} restaurées.`;
+  renderSettings();
+}
+$('exportBtn').onclick = exportData;
+$('importBtn').onclick = () => { $('importInput').value = ''; $('importInput').click(); };
+$('importInput').onchange = e => { const f = e.target.files[0]; if (f) importData(f); };
+
+/* ---------- Photos réelles (GitHub Pages) ---------- */
+const LORE = {
+ "chene-pedoncule": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "chene-sessile"
+  ],
+  "intro": "Le chêne des plaines et des sols lourds, symbole de longévité. Il porte ses glands au bout d'une longue queue.",
+  "dex": {
+   "taille": "25 à 35 m",
+   "age": "300 à 500 ans, parfois davantage",
+   "milieu": "Sols profonds et frais, plaines et vallées",
+   "alt": "Surtout en dessous de 800 m",
+   "bois": "Bois dur et durable : charpente, tonneaux, parquets",
+   "suisse": "Commun sur le Plateau, souvent conservé comme arbre isolé"
+  },
+  "fait": "Un chêne peut nourrir plusieurs centaines d'espèces d'insectes : c'est l'un des arbres les plus habités d'Europe.",
+  "terrain": "Retiens l'inversion : chez le pédonculé, le gland a une longue queue et la feuille presque pas.",
+  "tips": {
+   "feuille": "Lobes arrondis irréguliers, base en deux petites oreilles, pétiole très court.",
+   "ecorce": "Grise et profondément crevassée en long, formant un réseau serré.",
+   "fruit": "Glands portés par deux ou trois sur une longue tige.",
+   "silhouette": "Tronc massif et branches tordues, couronne large et irrégulière."
+  }
+ },
+ "chene-sessile": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "chene-pedoncule"
+  ],
+  "intro": "Le chêne des coteaux et des sols bien drainés. Ses glands sont posés directement sur le rameau, sans queue.",
+  "dex": {
+   "taille": "25 à 40 m",
+   "age": "300 à 500 ans",
+   "milieu": "Versants secs, sols filtrants",
+   "alt": "Jusque vers 1000 m",
+   "bois": "Bois recherché en tonnellerie et en menuiserie",
+   "suisse": "Fréquent dans le Jura et sur les coteaux du Valais"
+  },
+  "fait": "Les deux chênes s'hybrident facilement : beaucoup d'arbres présentent des caractères intermédiaires.",
+  "terrain": "Gland sans queue, feuille avec un vrai pétiole : c'est l'inverse exact du chêne pédonculé.",
+  "tips": {
+   "feuille": "Lobes plus réguliers, base en coin, pétiole net d'un à deux centimètres.",
+   "ecorce": "Grise, crevassée, proche de celle du pédonculé.",
+   "fruit": "Glands sans queue, collés au rameau, souvent groupés.",
+   "silhouette": "Port plus droit que le pédonculé, tronc mieux dessiné jusqu'en haut."
+  }
+ },
+ "sycomore": {
+  "art": "l'",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "erable-plane"
+  ],
+  "intro": "Le grand érable des forêts fraîches et des pâturages de montagne. On le reconnaît à son écorce qui s'écaille en plaques.",
+  "dex": {
+   "taille": "25 à 35 m",
+   "age": "150 à 250 ans",
+   "milieu": "Sols frais, montagne et versants nord",
+   "alt": "Jusque vers 1600 m",
+   "bois": "Bois blanc et homogène : lutherie, meubles, ustensiles de cuisine",
+   "suisse": "Un des feuillus les plus répandus en montagne"
+  },
+  "fait": "C'est le bois du dos des violons : on y recherche les ondes régulières du bois dit ondé.",
+  "terrain": "Écorce qui se détache en plaques comme un platane, et ailes des fruits formant un angle serré.",
+  "tips": {
+   "feuille": "Cinq lobes à dents irrégulières, dessous mat et pâle, pétiole sans latex.",
+   "ecorce": "Grise et lisse jeune, puis s'écaillant en plaques rectangulaires.",
+   "fruit": "Deux samares accolées formant un angle aigu, presque en V.",
+   "silhouette": "Grande couronne dense et arrondie, tronc court et fort."
+  }
+ },
+ "erable-plane": {
+  "art": "l'",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "sycomore"
+  ],
+  "intro": "L'érable aux feuilles pointues, premier à fleurir au printemps, souvent planté en ville.",
+  "dex": {
+   "taille": "20 à 30 m",
+   "age": "100 à 200 ans",
+   "milieu": "Sols riches, forêts mixtes et alignements urbains",
+   "alt": "Jusque vers 1200 m",
+   "bois": "Bois clair pour la menuiserie et le tournage",
+   "suisse": "Moins fréquent en forêt que le sycomore, très planté en ville"
+  },
+  "fait": "Casse une feuille par le pétiole : un latex blanc perle à la cassure. Le sycomore, lui, n'en produit pas.",
+  "terrain": "Lobes terminés en pointes fines, et fruits dont les ailes s'écartent presque à l'horizontale.",
+  "tips": {
+   "feuille": "Cinq lobes à pointes effilées, dessous luisant, latex blanc au pétiole.",
+   "ecorce": "Gris foncé, finement striée en long, sans plaques.",
+   "fruit": "Deux samares dont les ailes s'ouvrent largement, presque en ligne droite.",
+   "silhouette": "Couronne arrondie et régulière, souvent en alignement de rue."
+  }
+ },
+ "frene": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "sorbier",
+   "robinier"
+  ],
+  "intro": "Le grand arbre des fonds de vallée et des bords de rivière, à la feuille composée et aux bourgeons noirs.",
+  "dex": {
+   "taille": "25 à 40 m",
+   "age": "150 à 250 ans",
+   "milieu": "Sols frais et profonds, ripisylves",
+   "alt": "Jusque vers 1400 m",
+   "bois": "Bois souple et résistant : manches d'outils, skis, mobilier",
+   "suisse": "Très répandu, mais menacé par la chalarose, une maladie fongique"
+  },
+  "fait": "Ses bourgeons noir velours en hiver ne ressemblent à ceux d'aucun autre arbre d'Europe.",
+  "terrain": "En hiver, regarde les bourgeons : noirs et opposés, c'est un frêne, sans discussion.",
+  "tips": {
+   "feuille": "Feuille composée de 9 à 13 folioles dentées, opposées sur un axe commun.",
+   "ecorce": "Gris clair et lisse jeune, puis quadrillée d'un fin réseau de crevasses.",
+   "fruit": "Grappes de samares allongées qui restent tout l'hiver sur l'arbre.",
+   "silhouette": "Haute couronne claire et aérée, branches dressées vers le haut."
+  }
+ },
+ "tilleul": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret",
+   "prairie"
+  ],
+  "sosies": [
+   "noisetier"
+  ],
+  "intro": "Le tilleul à petites feuilles, arbre des places de village, connu pour le parfum de sa floraison en juin.",
+  "dex": {
+   "taille": "20 à 30 m",
+   "age": "300 à 500 ans, parfois bien plus",
+   "milieu": "Sols riches, forêts de pente et villages",
+   "alt": "Jusque vers 1200 m",
+   "bois": "Bois tendre, bois de sculpture par excellence",
+   "suisse": "Souvent planté comme arbre de village ; deux espèces coexistent en Suisse"
+  },
+  "fait": "Ses fleurs pendent sous une bractée en forme de langue, qui sert de voile au vent pour disperser les fruits.",
+  "terrain": "Feuille en cœur nettement asymétrique à la base, avec des touffes de poils roux aux angles des nervures dessous.",
+  "tips": {
+   "feuille": "Feuille en cœur, asymétrique, finement dentée, à pointe courte.",
+   "ecorce": "Grise et lisse jeune, puis finement fissurée en long.",
+   "fruit": "Petites boules dures pendues sous une bractée allongée, comme une aile.",
+   "silhouette": "Couronne dense et arrondie, souvent très large sur les arbres de place."
+  }
+ },
+ "aulne": {
+  "art": "l'",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "noisetier"
+  ],
+  "intro": "L'aulne glutineux, arbre des berges et des sols gorgés d'eau, reconnaissable à ses petits cônes ligneux.",
+  "dex": {
+   "taille": "15 à 25 m",
+   "age": "100 à 120 ans",
+   "milieu": "Bords de rivières, marais, sols détrempés",
+   "alt": "Jusque vers 1200 m",
+   "bois": "Bois qui résiste sous l'eau : pilotis, vannes, sabots",
+   "suisse": "Essentiel aux berges suisses, qu'il tient par ses racines"
+  },
+  "fait": "Ses racines fixent l'azote de l'air grâce à des bactéries : il enrichit le sol où il pousse.",
+  "terrain": "Le seul feuillu d'Europe à porter de petits cônes bruns et ligneux, présents toute l'année.",
+  "tips": {
+   "feuille": "Feuille ronde au bout tronqué, presque échancré, vert sombre et collante au printemps.",
+   "ecorce": "Brun-noir, fissurée en petites plaques carrées.",
+   "fruit": "Petits cônes ligneux bruns, groupés, qui persistent l'hiver.",
+   "silhouette": "Silhouette étroite et sombre, souvent penchée au-dessus de l'eau."
+  }
+ },
+ "noisetier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "aulne",
+   "tilleul"
+  ],
+  "intro": "Un arbuste de lisière poussant en cépée, dont les chatons jaunes annoncent la fin de l'hiver.",
+  "dex": {
+   "taille": "3 à 8 m",
+   "age": "60 à 80 ans par tige",
+   "milieu": "Lisières, haies, sous-bois clairs",
+   "alt": "Jusque vers 1600 m",
+   "bois": "Tiges souples pour la vannerie et les piquets ; noisettes récoltées",
+   "suisse": "Très commun dans toutes les haies du Plateau"
+  },
+  "fait": "Il fleurit dès janvier ou février, bien avant ses feuilles : ses chatons jaunes sont la première floraison de l'année.",
+  "terrain": "Feuille ronde, molle et velue au toucher, terminée par une petite pointe brusque.",
+  "tips": {
+   "feuille": "Feuille arrondie, doublement dentée, veloutée au toucher, à pointe courte.",
+   "ecorce": "Brun clair et lisse, marquée de lenticelles horizontales claires.",
+   "fruit": "Noisettes par groupes de deux ou trois, serrées dans une collerette découpée.",
+   "silhouette": "Plusieurs tiges partant du sol en touffe, jamais un tronc unique."
+  }
+ },
+ "chataignier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [],
+  "intro": "L'arbre des sols acides et des versants chauds, cultivé pendant des siècles pour ses fruits, au Tessin surtout.",
+  "dex": {
+   "taille": "20 à 30 m",
+   "age": "300 à 500 ans",
+   "milieu": "Sols acides, versants ensoleillés",
+   "alt": "Surtout en dessous de 900 m",
+   "bois": "Bois durable, riche en tanin : piquets, charpentes, tonneaux",
+   "suisse": "Surtout au Tessin et en Valais, où il a longtemps nourri les villages"
+  },
+  "fait": "On l'a appelé l'arbre à pain : sa farine a servi d'aliment de base dans les vallées du sud des Alpes.",
+  "terrain": "Ne confonds pas la châtaigne, dans une bogue très épineuse et par deux ou trois, avec le marron d'Inde, seul dans une bogue à gros piquants espacés.",
+  "tips": {
+   "feuille": "Longue feuille en fer de lance, bordée de dents nettes terminées en pointe.",
+   "ecorce": "Brun-gris, crevassée en long et souvent tordue en spirale sur les vieux troncs.",
+   "fruit": "Bogue hérissée d'épines fines et denses, renfermant deux ou trois châtaignes.",
+   "silhouette": "Tronc puissant et couronne étalée, souvent creux chez les très vieux sujets."
+  }
+ },
+ "noyer": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "prairie"
+  ],
+  "sosies": [
+   "frene"
+  ],
+  "intro": "Souvent planté près des fermes pour ses fruits, avec une couronne large et une odeur forte quand on froisse ses feuilles.",
+  "dex": {
+   "taille": "15 à 25 m",
+   "age": "100 à 150 ans",
+   "milieu": "Sols profonds, jardins, bords de champs",
+   "alt": "Jusque vers 800 m",
+   "bois": "Bois de haute valeur : ébénisterie, crosses de fusil",
+   "suisse": "Planté partout sur le Plateau, rarement spontané en forêt"
+  },
+  "fait": "Ses racines libèrent une substance qui gêne la croissance des autres plantes : peu de choses poussent sous un noyer.",
+  "terrain": "Froisse une feuille : l'odeur est puissante et résineuse, sans équivalent.",
+  "tips": {
+   "feuille": "Feuille composée de 5 à 9 folioles à bord lisse, très odorante au froissement.",
+   "ecorce": "Gris clair et lisse jeune, puis crevassée en long, presque argentée.",
+   "fruit": "Fruit vert et charnu, contenant la noix ; il tache les doigts en brun.",
+   "silhouette": "Couronne large et basse, tronc court, souvent isolé au milieu d'un pré."
+  }
+ },
+ "merisier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "bouleau"
+  ],
+  "intro": "Le cerisier sauvage des forêts, spectaculaire en fleurs au printemps et rouge vif à l'automne.",
+  "dex": {
+   "taille": "15 à 25 m",
+   "age": "80 à 100 ans",
+   "milieu": "Lisières et forêts de feuillus",
+   "alt": "Jusque vers 1400 m",
+   "bois": "Bois rougeâtre très prisé en ébénisterie",
+   "suisse": "Commun en lisière, ancêtre sauvage des cerisiers cultivés"
+  },
+  "fait": "C'est l'ancêtre de la plupart de nos cerises : les variétés de bouche en descendent directement.",
+  "terrain": "Deux petites glandes rouges à la base de la feuille, sur le pétiole : un détail que peu d'arbres partagent.",
+  "tips": {
+   "feuille": "Feuille ovale pendante, doublement dentée, avec deux glandes rouges au sommet du pétiole.",
+   "ecorce": "Brun-rouge brillante, marquée de lenticelles horizontales, se détachant en bandes.",
+   "fruit": "Petites cerises rouge sombre, amères, portées par une longue queue.",
+   "silhouette": "Tronc droit et branches étagées en couronnes régulières."
+  }
+ },
+ "sorbier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret",
+   "alpage"
+  ],
+  "sosies": [
+   "frene",
+   "alisier"
+  ],
+  "intro": "Le sorbier des oiseleurs, arbre de montagne aux bouquets de baies orange que les oiseaux dévorent en automne.",
+  "dex": {
+   "taille": "5 à 15 m",
+   "age": "80 à 100 ans",
+   "milieu": "Forêts claires, lisières, pâturages de montagne",
+   "alt": "Jusque vers 2000 m",
+   "bois": "Bois peu utilisé ; baies transformées en gelée après cuisson",
+   "suisse": "Très fréquent en montagne, jusqu'à la limite de la forêt"
+  },
+  "fait": "Son nom vient de la chasse : ses baies servaient d'appât pour capturer les grives.",
+  "terrain": "Feuille composée comme celle du frêne, mais folioles dentées jusqu'à la base et bourgeons velus, jamais noirs.",
+  "tips": {
+   "feuille": "Feuille composée de 11 à 17 folioles dentées sur toute leur longueur.",
+   "ecorce": "Gris lisse et brillante, marquée de lenticelles, restant lisse longtemps.",
+   "fruit": "Bouquets denses de petites baies rouge orangé, très visibles en automne.",
+   "silhouette": "Petit arbre léger à couronne ovale, souvent isolé en pâturage."
+  }
+ },
+ "alisier": {
+  "art": "l'",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "sorbier"
+  ],
+  "intro": "L'alisier blanc, arbre des sols calcaires et secs, dont le feuillage paraît blanc quand le vent le retourne.",
+  "dex": {
+   "taille": "10 à 15 m",
+   "age": "100 à 150 ans",
+   "milieu": "Pentes calcaires sèches, Jura et Préalpes",
+   "alt": "Jusque vers 1600 m",
+   "bois": "Bois dur ; fruits comestibles blets, autrefois séchés",
+   "suisse": "Caractéristique des pentes calcaires du Jura"
+  },
+  "fait": "Vu d'en bas un jour de vent, il semble changer de couleur : le dessous blanc feutré de ses feuilles se retourne d'un coup.",
+  "terrain": "Retourne une feuille : le dessous est blanc et feutré comme du feutre, ce qui l'isole de tout autre arbre.",
+  "tips": {
+   "feuille": "Feuille simple ovale, dentée, vert sombre dessus et blanc feutré dessous.",
+   "ecorce": "Gris lisse, se fissurant tard et légèrement.",
+   "fruit": "Petits fruits rouge orangé à chair farineuse, en bouquets lâches.",
+   "silhouette": "Petit arbre à couronne compacte, souvent accroché aux pentes rocheuses."
+  }
+ },
+ "orme": {
+  "art": "l'",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "noisetier"
+  ],
+  "intro": "L'orme des montagnes, à la feuille nettement asymétrique, raréfié par la graphiose.",
+  "dex": {
+   "taille": "20 à 35 m",
+   "age": "150 à 250 ans",
+   "milieu": "Forêts de pente fraîches et ravins",
+   "alt": "Jusque vers 1400 m",
+   "bois": "Bois solide et résistant à l'eau",
+   "suisse": "Fortement réduit depuis la graphiose, maladie transmise par un insecte"
+  },
+  "fait": "La maladie qui l'a décimé depuis les années 1920 est un champignon transporté d'arbre en arbre par de petits scolytes.",
+  "terrain": "Pose ton doigt à la base de la feuille : un côté descend nettement plus bas que l'autre, et la surface est râpeuse.",
+  "tips": {
+   "feuille": "Feuille rugueuse, à base franchement asymétrique, doublement dentée.",
+   "ecorce": "Brun-gris, crevassée en long chez les arbres âgés.",
+   "fruit": "Samares rondes et plates, dont la graine occupe le centre ; elles mûrissent tôt.",
+   "silhouette": "Couronne large et haute, silhouette souvent en éventail."
+  }
+ },
+ "saule": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "tremble"
+  ],
+  "intro": "Le saule marsault, pionnier des clairières, dont les chatons argentés puis jaunes nourrissent les premières abeilles.",
+  "dex": {
+   "taille": "5 à 12 m",
+   "age": "50 à 60 ans",
+   "milieu": "Clairières, talus, bords de chemins",
+   "alt": "Jusque vers 1800 m",
+   "bois": "Rameaux souples ; arbre très utile aux pollinisateurs",
+   "suisse": "Partout où la forêt s'ouvre, il arrive en premier"
+  },
+  "fait": "Ses chatons sont une ressource vitale pour les abeilles et les bourdons au sortir de l'hiver, quand presque rien d'autre ne fleurit.",
+  "terrain": "Feuille ovale à dessous gris feutré et bord légèrement ondulé, bien plus large que celle des autres saules.",
+  "tips": {
+   "feuille": "Feuille ovale et large, vert sombre dessus, gris feutré dessous, bord ondulé.",
+   "ecorce": "Grise et lisse, se fissurant en losanges avec l'âge.",
+   "fruit": "Chatons dressés, argentés puis jaunes, libérant un duvet cotonneux.",
+   "silhouette": "Petit arbre touffu à plusieurs troncs, souvent en bordure de clairière."
+  }
+ },
+ "tremble": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "saule"
+  ],
+  "intro": "Le peuplier tremble, dont les feuilles bougent au moindre souffle grâce à leur pétiole aplati.",
+  "dex": {
+   "taille": "15 à 25 m",
+   "age": "60 à 100 ans",
+   "milieu": "Clairières, sols pauvres, pionnier",
+   "alt": "Jusque vers 1800 m",
+   "bois": "Bois léger : allumettes, panneaux, pâte à papier",
+   "suisse": "Pionnier fréquent après une coupe ou une tempête"
+  },
+  "fait": "Son pétiole est aplati perpendiculairement à la feuille : le moindre vent la fait pivoter, d'où le bruissement continu.",
+  "terrain": "Écoute avant de regarder : c'est le seul arbre qui frémit quand l'air ne bouge presque pas.",
+  "tips": {
+   "feuille": "Feuille presque ronde à bord ondulé, sur un pétiole aplati et flexible.",
+   "ecorce": "Gris-vert clair et lisse, marquée de losanges sombres à la base.",
+   "fruit": "Chatons pendants libérant des graines cotonneuses au printemps.",
+   "silhouette": "Silhouette élancée et claire, feuillage mobile et brillant."
+  }
+ },
+ "marronnier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "prairie"
+  ],
+  "sosies": [],
+  "intro": "Le marronnier d'Inde, planté dans les parcs et les cours d'école pour son ombre et ses bougies de fleurs blanches.",
+  "dex": {
+   "taille": "20 à 30 m",
+   "age": "150 à 200 ans",
+   "milieu": "Parcs, avenues, cours ; rarement en forêt",
+   "alt": "Jusque vers 800 m",
+   "bois": "Bois sans valeur ; arbre planté pour l'ombre et l'ornement",
+   "suisse": "Introduit des Balkans, très planté depuis le 17e siècle"
+  },
+  "fait": "Ses bourgeons d'hiver sont couverts d'une résine collante qui les protège du gel, au point qu'on peut les décoller au doigt.",
+  "terrain": "Feuille palmée à cinq ou sept folioles partant d'un même point, comme une main ouverte : aucun autre grand arbre suisse ne fait ça.",
+  "tips": {
+   "feuille": "Grande feuille palmée, 5 à 7 folioles élargies vers le bout, partant d'un point unique.",
+   "ecorce": "Brun-gris, se détachant en plaques irrégulières avec l'âge.",
+   "fruit": "Bogue verte à gros piquants espacés, contenant un seul marron brillant.",
+   "silhouette": "Couronne large et dense, tronc court, port en dôme."
+  },
+  "toxique": "Le marron d'Inde est toxique : il ne se mange pas, contrairement à la châtaigne."
+ },
+ "robinier": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "prairie",
+   "foret"
+  ],
+  "sosies": [
+   "frene"
+  ],
+  "intro": "Le robinier faux-acacia, venu d'Amérique du Nord, épineux et très envahissant sur les sols secs.",
+  "dex": {
+   "taille": "15 à 25 m",
+   "age": "80 à 120 ans",
+   "milieu": "Talus secs, friches, bords de voies ferrées",
+   "alt": "Surtout en dessous de 800 m",
+   "bois": "Bois très durable sans traitement : piquets de vigne, mobilier de jardin",
+   "suisse": "Considéré comme espèce envahissante en Suisse"
+  },
+  "fait": "Ses fleurs blanches en grappes sont très mellifères : c'est d'elles que vient le miel vendu sous le nom d'acacia.",
+  "terrain": "Deux épines dures encadrent chaque bourgeon : un caractère que ni le frêne ni le sorbier ne possèdent.",
+  "tips": {
+   "feuille": "Feuille composée de folioles ovales à bord lisse, arrondies aux deux bouts.",
+   "ecorce": "Brun-gris, profondément crevassée en cordes torsadées.",
+   "fruit": "Gousses plates et brunes, pendantes, persistant l'hiver.",
+   "silhouette": "Couronne claire et irrégulière, tronc souvent tordu, drageonne beaucoup."
+  },
+  "toxique": "Écorce, feuilles et graines sont toxiques ; seules les fleurs se consomment, cuites."
+ },
+ "sureau": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret",
+   "prairie"
+  ],
+  "sosies": [
+   "frene"
+  ],
+  "intro": "Le sureau noir, arbuste des lisières et des décombres, connu pour ses ombelles blanches puis ses baies noires.",
+  "dex": {
+   "taille": "3 à 7 m",
+   "age": "30 à 60 ans",
+   "milieu": "Lisières, haies, sols riches en azote",
+   "alt": "Jusque vers 1600 m",
+   "bois": "Fleurs en sirop, baies en gelée après cuisson ; moelle tendre servant aux sifflets",
+   "suisse": "Commun partout où le sol est riche, près des fermes"
+  },
+  "fait": "Sa moelle blanche et tendre se pousse facilement hors du rameau : c'est le bois des sifflets et des sarbacanes d'enfance.",
+  "terrain": "Casse un rameau : il est creux, rempli d'une moelle blanche et légère, ce qu'aucun arbre voisin ne présente.",
+  "tips": {
+   "feuille": "Feuille composée de 5 à 7 folioles dentées, à l'odeur désagréable au froissement.",
+   "ecorce": "Gris-brun, liégeuse, marquée de lenticelles saillantes.",
+   "fruit": "Larges ombelles plates de baies noires brillantes, sur des pédoncules rougis.",
+   "silhouette": "Arbuste évasé à plusieurs tiges, souvent penché."
+  },
+  "toxique": "Les baies crues et les autres parties sont toxiques ; la cuisson les rend consommables."
+ },
+ "cornouiller": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [],
+  "intro": "Le cornouiller sanguin, arbuste des haies dont les rameaux rougissent l'hiver.",
+  "dex": {
+   "taille": "2 à 5 m",
+   "age": "30 à 50 ans",
+   "milieu": "Haies, lisières, sols calcaires",
+   "alt": "Jusque vers 1200 m",
+   "bois": "Rameaux de vannerie ; baies non comestibles",
+   "suisse": "Très courant dans les haies du Plateau"
+  },
+  "fait": "Son nom vient de la couleur : rameaux rouge sang en hiver et feuilles écarlates en automne.",
+  "terrain": "Casse doucement une feuille en deux sans la déchirer : de fins fils élastiques restent tendus entre les moitiés.",
+  "tips": {
+   "feuille": "Feuille ovale à nervures arquées convergeant vers la pointe, bord lisse.",
+   "ecorce": "Rameaux rouge sombre en hiver, écorce vieille grise et fine.",
+   "fruit": "Petites baies noires, luisantes et amères, en bouquets lâches.",
+   "silhouette": "Arbuste touffu et bas, tiges nombreuses partant du sol."
+  },
+  "toxique": "Ses baies ne sont pas comestibles."
+ },
+ "houx": {
+  "art": "le ",
+  "type": "feuillu",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [],
+  "intro": "Le houx, arbuste de sous-bois à feuilles persistantes et piquantes, aux baies rouges en hiver.",
+  "dex": {
+   "taille": "2 à 10 m",
+   "age": "100 à 300 ans",
+   "milieu": "Sous-bois ombragés et frais, hêtraies",
+   "alt": "Jusque vers 1200 m",
+   "bois": "Bois blanc et dur pour le tournage ; protégé dans plusieurs cantons",
+   "suisse": "Assez rare en Suisse, protégé par endroits"
+  },
+  "fait": "Les feuilles du bas sont très piquantes, celles du haut presque lisses : l'arbre ne se défend que là où le brouteur atteint.",
+  "terrain": "Feuille vernissée, épaisse et persistante : le seul sous-bois où l'on se pique en hiver.",
+  "tips": {
+   "feuille": "Feuille coriace et brillante, à bord ondulé et épineux, persistante.",
+   "ecorce": "Gris clair et lisse, restant lisse même âgée.",
+   "fruit": "Baies rouge vif groupées à l'aisselle des feuilles, sur les pieds femelles.",
+   "silhouette": "Petit arbre conique et sombre, feuillu toute l'année."
+  },
+  "toxique": "Les baies rouges sont toxiques, surtout pour les enfants."
+ },
+ "if": {
+  "art": "l'",
+  "type": "conifere",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "sapin"
+  ],
+  "intro": "L'if, conifère sombre à croissance très lente, capable de vivre plus de mille ans.",
+  "dex": {
+   "taille": "10 à 20 m",
+   "age": "500 à 1500 ans",
+   "milieu": "Sous-bois ombragés, pentes calcaires",
+   "alt": "Jusque vers 1400 m",
+   "bois": "Bois très élastique : arcs du Moyen Âge ; arbre protégé en Suisse",
+   "suisse": "Rare et protégé, souvent planté dans les cimetières"
+  },
+  "fait": "Les grands arcs anglais du Moyen Âge étaient taillés dans son bois, à la fois souple et résistant.",
+  "terrain": "Aiguilles plates et molles comme celles du sapin, mais vert très sombre dessous, sans les deux lignes blanches.",
+  "tips": {
+   "feuille": "Aiguilles plates, souples, vert sombre sur les deux faces, en deux rangées.",
+   "ecorce": "Brun-rouge, mince, se détachant en plaques ; tronc souvent cannelé.",
+   "fruit": "Pas de cône : une arille rouge et charnue, ouverte au bout, entourant une graine.",
+   "silhouette": "Silhouette sombre et trapue, souvent à plusieurs troncs soudés."
+  },
+  "toxique": "Toutes les parties sont très toxiques sauf la chair rouge de l'arille ; la graine qu'elle contient est mortelle."
+ },
+ "pin": {
+  "art": "le ",
+  "type": "conifere",
+  "milieux": [
+   "foret"
+  ],
+  "sosies": [
+   "arole",
+   "meleze"
+  ],
+  "intro": "Le pin sylvestre, à l'écorce orangée dans le haut du tronc, roi des sols secs et pauvres.",
+  "dex": {
+   "taille": "20 à 35 m",
+   "age": "150 à 300 ans",
+   "milieu": "Sols secs et sableux, Valais et Grisons",
+   "alt": "Jusque vers 2000 m",
+   "bois": "Bois résineux de charpente ; autrefois résine et goudron",
+   "suisse": "Dominant dans les vallées sèches du Valais et des Grisons"
+  },
+  "fait": "Le haut de son tronc prend une teinte cuivrée qui se voit de loin, surtout à la lumière rasante du soir.",
+  "terrain": "Compte les aiguilles d'un faisceau : deux chez le pin sylvestre, cinq chez l'arole.",
+  "tips": {
+   "feuille": "Aiguilles par deux, tordues, raides, bleutées, de 4 à 7 cm.",
+   "ecorce": "Écailleuse et grise en bas, orange cuivré et fine dans le haut du tronc.",
+   "fruit": "Petit cône conique gris-brun, dur, pendant vers le bas.",
+   "silhouette": "Tronc souvent tordu, couronne claire et étalée en parasol chez les vieux arbres."
+  }
+ },
+ "arole": {
+  "art": "l'",
+  "type": "conifere",
+  "milieux": [
+   "alpage"
+  ],
+  "sosies": [
+   "pin"
+  ],
+  "intro": "Le pin cembro, arbre de la haute montagne, dont les graines nourrissent le casse-noix moucheté.",
+  "dex": {
+   "taille": "10 à 25 m",
+   "age": "500 à 1000 ans",
+   "milieu": "Haute montagne, Engadine et Valais",
+   "alt": "Entre 1500 et 2500 m",
+   "bois": "Bois tendre et parfumé : lambris des chambres d'arole ; graines comestibles",
+   "suisse": "Emblème de l'Engadine, où il forme de vieilles forêts"
+  },
+  "fait": "Il dépend d'un oiseau : le casse-noix moucheté cache ses graines pour l'hiver, en oublie une partie, et c'est ainsi que l'arole se ressème.",
+  "terrain": "Cinq aiguilles par faisceau, souples, à lignes blanches sur la face interne.",
+  "tips": {
+   "feuille": "Aiguilles par cinq, souples, marquées de blanc sur la face interne.",
+   "ecorce": "Gris-brun, crevassée et écailleuse sur les vieux troncs.",
+   "fruit": "Gros cône dressé, violacé, ne s'ouvrant pas seul : les oiseaux le démontent.",
+   "silhouette": "Silhouette trapue et tourmentée, souvent battue par le vent en altitude."
+  }
+ },
+ "meleze": {
+  "art": "le ",
+  "type": "conifere",
+  "milieux": [
+   "alpage",
+   "foret"
+  ],
+  "sosies": [
+   "pin"
+  ],
+  "intro": "Le seul conifère d'Europe à perdre toutes ses aiguilles en hiver, doré en automne.",
+  "dex": {
+   "taille": "25 à 45 m",
+   "age": "400 à 600 ans",
+   "milieu": "Montagne, versants ensoleillés, Valais et Grisons",
+   "alt": "Entre 1000 et 2400 m",
+   "bois": "Bois résineux et durable, prisé en construction de chalets",
+   "suisse": "Très présent dans les Alpes internes, planté aussi en plaine"
+  },
+  "fait": "En octobre, les mélézins virent à l'or avant de se dénuder : c'est le seul conifère indigène à passer l'hiver sans aiguilles.",
+  "terrain": "Aiguilles douces groupées en petites touffes sur des rameaux courts, jamais isolées comme chez l'épicéa.",
+  "tips": {
+   "feuille": "Aiguilles molles et claires, en touffes de 20 à 40 sur de courts rameaux.",
+   "ecorce": "Épaisse, gris-brun, crevassée en larges plaques rougeâtres à l'intérieur.",
+   "fruit": "Petit cône ovale dressé, brun clair, restant des années sur l'arbre.",
+   "silhouette": "Silhouette conique et claire, branches un peu tombantes ; nu en hiver."
+  }
+ }
+};
+
+const PACK_LABELS = {arbres:'Arbres de forêt', arbustes:'Arbustes et baies', fleurs:'Fleurs des prés et d\'alpage'};
+function adoptSpecies(list){
+  let added = 0;
+  (list || []).forEach(x => {
+    if (!x || !x.id || !GROUPS[x.group] || sp(x.id)) return;
+    if (!PACKS.some(p => p.id === x.pack)) PACKS.push({id:x.pack, label:PACK_LABELS[x.pack] || x.pack, group:x.group});
+    const lore = LORE[x.id] || {};
+    SPECIES.push({
+      id:x.id, group:x.group, pack:x.pack, milieux:lore.milieux || [], art:lore.art || x.art || 'le ',
+      fr:x.fr || x.sci || x.id, sci:x.sci || '', type:lore.type || (x.group === 'fleur' ? 'fleur' : (x.type || '')),
+      sosies:lore.sosies || [], intro:lore.intro || '', dex:lore.dex || null,
+      fait:lore.fait || '', terrain:lore.terrain || '', tips:lore.tips || {},
+      ...((lore.toxique || x.toxique) ? {toxique:lore.toxique || x.toxique} : {}),
+      imported:!LORE[x.id]
+    });
+    added++;
+  });
+  return added;
+}
+async function loadPhotos(){
+  try {
+    const r = await fetch('arbres.json', {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    adoptSpecies(d.species);
+    const real = (d.photos || []).filter(p => p.src && sp(p.species) && ORGAN_LABELS[p.organ]
+      && GROUPS[sp(p.species).group].organs.includes(p.organ));
+    if (!real.length) return;
+    const combos = new Set(real.map(p => `${p.species}|${p.organ}`));
+    PHOTOS = PHOTOS.filter(p => !combos.has(`${p.species}|${p.organ}`)).concat(real.map(p => ({...p, id:String(p.id)})));
+    usingPhotos = true;
+    setTimeout(preloadSoon, 800);
+    if (!$('home').hidden) renderHome();
+    if (!$('herbier').hidden) renderHerbier();
+    if (!$('settings').hidden) renderSettings();
+  } catch(e) {}
+}
+
+loadShots(); goto('home'); loadPhotos();
+</script>
+</body>
+</html>
