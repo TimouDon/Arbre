@@ -118,13 +118,6 @@ main>section{animation:viewIn .22s ease-out}
 .gocard:disabled{opacity:.5}
 
 /* entrées */
-.entries{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
-.entries button{width:100%;display:flex;align-items:center;gap:13px;padding:14px;cursor:pointer;text-align:left}
-.entries button:active{transform:translateY(1px)}
-.entries .ico{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--mont);display:flex;align-items:center;justify-content:center;color:var(--encre2)}
-.entries .ico svg{width:19px;height:19px}
-.entries .t{font-size:1.08rem;display:block}
-.entries .s{font-size:.83rem;color:var(--encre2)}
 
 /* marques d'organe */
 .marks{display:flex;gap:7px;flex:0 0 auto}
@@ -197,6 +190,19 @@ details.id[open]>summary::after{content:"–"}
 .addshot svg{width:26px;height:26px}
 .shotacts{display:flex;gap:16px;margin-top:4px}
 .warnbox{border-left:3px solid var(--rouille);padding:3px 0 3px 12px;margin-top:12px;font-size:.88rem;color:var(--rouille)}
+
+/* cartes de nom latin */
+.latincard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:44px 18px;text-align:center}
+.latincard .lat{font-family:Fraunces,serif;font-style:italic;font-size:1.9rem;line-height:1.15}
+.latincard .riddle{font-family:Fraunces,serif;font-size:1.25rem;line-height:1.3;max-width:26ch}
+.latincard .latsub{font-size:.8rem;color:var(--encre2)}
+.choice .latopt{font-family:Fraunces,serif;font-style:italic;color:var(--encre);font-size:1.05rem;margin:0}
+.latline{font-family:Fraunces,serif;font-size:1.15rem;margin:2px 0 4px}
+.src{font-size:.75rem;color:var(--encre2);margin:6px 0 0;font-style:italic}
+.glose{font-size:.92rem;color:var(--encre2);margin:0}
+.memo{font-size:.86rem;color:var(--encre2);margin:8px 0 0;padding-top:8px;border-top:1px solid var(--ligne)}
+.memo i{font-family:Fraunces,serif;color:var(--encre)}
+.glose b{color:var(--encre);font-style:italic;font-weight:600}
 
 /* quiz : duel et indices croisés */
 .duel{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:2px}
@@ -337,7 +343,12 @@ select,input[type=text]{width:100%;padding:12px;border:1px solid var(--ligne);bo
     <span><span class="go-t">S'entraîner</span><span class="go-s" id="startInfo"></span></span>
     <span class="chev">›</span>
   </button>
-  <ul class="entries" id="entries"></ul>
+  <button class="card gocard" id="startKnow" hidden>
+    <span><span class="go-t">Connaître</span><span class="go-s" id="knowInfo"></span></span>
+    <span class="chev">›</span>
+  </button>
+  <p class="muted" id="knowHint" hidden></p>
+  <p class="warnbox" id="missInfo" hidden></p>
   <p class="muted" id="homeInfo"></p>
   <p class="muted" id="unlockInfo"></p>
   <p class="muted" id="sourceInfo"></p>
@@ -394,6 +405,7 @@ select,input[type=text]{width:100%;padding:12px;border:1px solid var(--ligne);bo
   <div class="card panel">
     <h3>Ce que tu apprends</h3>
     <div id="packs"></div>
+    <label class="check"><input type="checkbox" id="setLatin"><span><b>Mode Connaître</b><br><span class="muted">noms latins, une fois l'espèce bien reconnue</span></span></label>
     <label for="setMilieu">Milieu</label>
     <select id="setMilieu"></select>
   </div>
@@ -422,7 +434,8 @@ select,input[type=text]{width:100%;padding:12px;border:1px solid var(--ligne);bo
     <p class="muted" id="setMsg"></p>
   </div>
   <div class="card panel">
-    <h3>État des images</h3>
+    <h3>État de l'app</h3>
+    <p class="muted" id="version"></p>
     <p class="muted" id="loadInfo"></p>
   </div>
   <div class="card panel">
@@ -790,7 +803,7 @@ const SPECIES = [
   {id:'hetre', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Hêtre', sci:'Fagus sylvatica', type:'feuillu', sosies:['charme'],
    intro:"L'arbre le plus répandu des forêts suisses de basse altitude. Il forme des forêts sombres où peu de plantes poussent au sol.",
    dex:{taille:"30 \u00e0 40 m", age:"150 \u00e0 250 ans", milieu:"Sols riches et bien drain\u00e9s, du Plateau au Jura", alt:"Jusque vers 1400 m", bois:"Bois dur et homog\u00e8ne : meubles, parquets, excellent bois de feu", suisse:"Deuxi\u00e8me essence du pays en volume ; plus de 40 % des feuillus suisses"},
-   fait:"Les h\u00eatres d'une r\u00e9gion fructifient tous la m\u00eame ann\u00e9e. Lors de ces \u00ab ann\u00e9es \u00e0 fa\u00eenes \u00bb, le sol en est tapiss\u00e9, puis plus rien pendant deux \u00e0 cinq ans.",
+   fait:"Les h\u00eatres d'une r\u00e9gion fructifient tous la m\u00eame ann\u00e9e. Ces \u00ab ann\u00e9es \u00e0 fa\u00eenes \u00bb reviennent tous les deux \u00e0 huit ans selon le temps, l'altitude et la latitude.",
    terrain:"Les jeunes h\u00eatres gardent leurs feuilles s\u00e8ches tout l'hiver : un rep\u00e8re facile quand tout est nu.",
    tips:{feuille:"Bord ondulé mais pas denté, nervures parallèles bien espacées, petits poils sur le bord.",
          ecorce:"Lisse, grise et régulière, même sur les très vieux arbres.",
@@ -825,7 +838,7 @@ const SPECIES = [
          silhouette:"Branches plutôt horizontales ; les vieux arbres ont un sommet aplati, en « nid de cigogne »."}},
   {id:'charme', group:'arbre', pack:'arbres', milieux:['foret'], art:"le ", fr:'Charme', sci:'Carpinus betulus', type:'feuillu', sosies:['hetre'],
    intro:"Souvent confondu avec le hêtre. Très utilisé pour les haies, car il supporte bien la taille.",
-   dex:{taille:"15 \u00e0 25 m", age:"100 \u00e0 150 ans", milieu:"Sols lourds, souvent en m\u00e9lange avec le ch\u00eane", alt:"Surtout en dessous de 800 m", bois:"Le bois le plus dur d'Europe : billots de boucher, manches d'outils, autrefois les dents des roues de moulin", suisse:"Commun sur le Plateau, tr\u00e8s utilis\u00e9 en haies taill\u00e9es"},
+   dex:{taille:"15 \u00e0 25 m", age:"100 \u00e0 150 ans", milieu:"Sols lourds, souvent en m\u00e9lange avec le ch\u00eane", alt:"Surtout en dessous de 800 m", bois:"Un des bois les plus durs d'Europe, le plus dur de nos grands arbres forestiers : billots de boucher, manches d'outils, autrefois les dents des roues de moulin. Le buis et le cornouiller mâle, plus petits, le dépassent", suisse:"Commun sur le Plateau, tr\u00e8s utilis\u00e9 en haies taill\u00e9es"},
    fait:"Son tronc n'est jamais rond : il est cannel\u00e9, comme un muscle contract\u00e9.",
    terrain:"Comme le h\u00eatre, il garde ses feuilles s\u00e8ches en hiver. C'est pourquoi les haies de charme restent opaques toute l'ann\u00e9e.",
    tips:{feuille:"Bord doublement denté, nervures nombreuses et serrées, feuille un peu plissée.",
@@ -858,8 +871,8 @@ const SPECIES = [
    floraison:[5, 6, 7, 8],
    sosies:[],
    intro:"La grande gentiane bleue des alpages, presque pos\u00e9e au sol. Elle pousse sur les pelouses de montagne, surtout sur sols acides.",
-   dex:{taille:"5 \u00e0 10 cm, la fleur fait presque toute la plante", age:"Vivace de longue dur\u00e9e", milieu:"Pelouses alpines, p\u00e2turages de montagne", alt:"Entre 1000 et 3000 m", bois:"Prot\u00e9g\u00e9e dans plusieurs cantons : elle se regarde, elle ne se cueille pas", suisse:"Embl\u00e9matique des Alpes ; c'est une autre esp\u00e8ce, la gentiane jaune, qui sert \u00e0 faire la liqueur"},
-   fait:"Sa corolle se ferme quand le temps se couvre : les montagnards s'en servaient comme barom\u00e8tre.",
+   dex:{taille:"5 \u00e0 10 cm, la fleur fait presque toute la plante", age:"Vivace de longue dur\u00e9e", milieu:"Pelouses alpines, p\u00e2turages de montagne", alt:"Entre 800 et 3000 m", bois:"Prot\u00e9g\u00e9e dans plusieurs cantons : elle se regarde, elle ne se cueille pas", suisse:"Embl\u00e9matique des Alpes ; c'est une autre esp\u00e8ce, la gentiane jaune, qui sert \u00e0 faire la liqueur"},
+   fait:"Elle a une jumelle presque identique, la gentiane de Clusius : la première pousse sur sols pauvres en calcaire, la seconde sur calcaire. Le sol tranche là où l'œil hésite.",
    terrain:"Une trompette bleue d\u00e9mesur\u00e9e par rapport \u00e0 la plante, pos\u00e9e sur une rosette plate : rien d'autre ne lui ressemble en montagne.",
    tips:{fleur:"Grande trompette bleu profond \u00e0 cinq lobes pointus, gorge plus sombre.", feuille:"Feuille \u00e9paisse et luisante, en lance, group\u00e9e en rosette au ras du sol.", tige:"Tige tr\u00e8s courte : la fleur semble sortir directement de la rosette.", port:"Rosette plate d'o\u00f9 jaillissent une ou deux trompettes bleues."}},
   {id:'ail',
@@ -897,7 +910,7 @@ const SPECIES = [
 ];
 const ORGAN_LABELS = {
   feuille:'Feuilles', ecorce:'Écorce', fruit:'Fruits', silhouette:'Arbre entier',
-  fleur:'Fleur', tige:'Tige', port:'Port'
+  fleur:'Fleur', tige:'Tige', port:'Port', latin:'Nom latin', fait:'À savoir', altitude:'Altitude', famille:'Famille'
 };
 // Chaque groupe a ses propres indices : une fleur n'a pas d'écorce.
 const GROUPS = {
@@ -940,6 +953,7 @@ const ICONS = {
   silhouette:'<circle cx="10" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 13.6V18" stroke="currentColor" stroke-width="1.6"/>',
   fleur:'<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="10" cy="4.4" rx="2.5" ry="3.3"/><ellipse cx="15.3" cy="8.3" rx="2.5" ry="3.3" transform="rotate(72 15.3 8.3)"/><ellipse cx="13.3" cy="14.5" rx="2.5" ry="3.3" transform="rotate(144 13.3 14.5)"/><ellipse cx="6.7" cy="14.5" rx="2.5" ry="3.3" transform="rotate(216 6.7 14.5)"/><ellipse cx="4.7" cy="8.3" rx="2.5" ry="3.3" transform="rotate(288 4.7 8.3)"/><circle cx="10" cy="10" r="2.3"/></g>',
   tige:'<path d="M10 19V3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10 9C6.4 8.6 5 6.6 5 4.2c2.8-.2 4.7 1.6 5 4.8ZM10 14c3.6-.4 5-2.4 5-4.8-2.8-.2-4.7 1.6-5 4.8Z" fill="none" stroke="currentColor" stroke-width="1.4"/>',
+  latin:'<path d="M3 4.5h14M3 15.5h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.4 12.5 9.6 5.5l3.2 7M7.5 10.2h4.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
   port:'<path d="M3 18h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M10 18V7M10 18C7 15 5.5 11.5 5.6 7.4M10 18c3-3 4.5-6.5 4.4-10.6" fill="none" stroke="currentColor" stroke-width="1.5"/>'
 };
 // Contour fermé de chaque organe : sert de fenêtre pour la photo de l'utilisateur.
@@ -950,6 +964,7 @@ const SHAPES = {
   silhouette:'M10 2.4a5.6 5.6 0 110 11.2 5.6 5.6 0 010-11.2Z',
   fleur:'M10 1.2a3 3 0 012.9 3.9 3 3 0 013.9 4.4 3 3 0 01-1.6 4.9 3 3 0 01-4.1 3.3 3 3 0 01-4.2-3.3 3 3 0 01-1.6-4.9 3 3 0 013.9-4.4A3 3 0 0110 1.2Z',
   tige:'M7.6 2h4.8v16H7.6Z',
+  latin:'M2.6 3.4h14.8v13.2H2.6Z',
   port:'M10 2c4 3.2 6 7.4 6 11.2 0 2.8-2.7 4.8-6 4.8s-6-2-6-4.8C4 9.4 6 5.2 10 2Z'
 };
 let cid = 0;
@@ -1025,14 +1040,15 @@ const MIN = 60e3, DAY = 864e5;
 const INTERVALS = [0, 2*MIN, 10*MIN, DAY, 3*DAY, 7*DAY, 21*DAY]; // par boîte
 const SESSION_LEN = 10;
 const RECALL_BOX = 3;   // à partir de cette boîte : question sans choix
-const UNLOCK_BOX = 2;   // toutes les cartes à ce niveau => nouvelle espèce
+const UNLOCK_BOX = 2;    // niveau qui rend une planche « acquise »
+const UNLOCK_RATIO = 0.75; // part des planches acquises suffisant à débloquer la suivante
 const START_COUNT = 3;
 const KEY = 'quel-arbre-v2';
 
 /* ---------- État ---------- */
 function freshState(){
   const first = SPECIES.slice(0, START_COUNT).map(s => s.id);
-  return {v:2, unlocked:first, intros:[...first], cards:{}, conf:{}, log:[], season:'auto', focus:'all', milieu:'tous', packs:['arbres'], dexFilter:'tous', dexSort:'ordre',
+  return {v:2, unlocked:first, intros:[...first], cards:{}, conf:{}, log:[], season:'auto', focus:'all', milieu:'tous', latin:true, packs:['arbres'], dexFilter:'tous', dexSort:'ordre',
     shots:{},
     stats:{answers:0, correct:0, sessions:0, organ:{}, hist:[], days:[], recallOk:0, sosieRun:0, sosieBest:0, winter:false, free:0, duelOk:0, typeOk:0},
     wins:{}};
@@ -1040,6 +1056,7 @@ function freshState(){
 let state = freshState();
 try { const s = localStorage.getItem(KEY); if (s) state = Object.assign(freshState(), JSON.parse(s)); } catch(e) {}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+const VERSION = '19.09.2026 · 15 altitudes vérifiées';
 const st = () => state.stats;
 const MONTH = 30 * 864e5;
 // Une confusion ancienne pèse moins qu'une confusion d'hier : demi-vie d'un mois.
@@ -1064,6 +1081,10 @@ const WINS = [
   {id:'ecorce', t:'L\'écorce sans les feuilles', d:'Dix écorces reconnues.', test:() => organStat('ecorce').c >= 10},
   {id:'hiver', t:'Botaniste d\'hiver', d:'Terminer une session avec les indices d\'hiver.', test:() => st().winter},
   {id:'rappel', t:'Sans filet', d:'Cinq noms retrouvés de mémoire, sans liste.', test:() => st().typeOk >= 5},
+  {id:'latin', t:'Nomenclature', d:'Dix noms latins acquis.', test:() => Object.entries(state.cards).filter(([k, c]) => k.endsWith('|latin') && c.box >= UNLOCK_BOX).length >= 10},
+  {id:'savoirs', t:'Tête bien faite', d:'Dix devinettes « qui suis-je ? » acquises.', test:() => Object.entries(state.cards).filter(([k, c]) => k.endsWith('|fait') && c.box >= UNLOCK_BOX).length >= 10},
+  {id:'altitude', t:'Sens de l\'altitude', d:'Cinq espèces dont tu situes l\'étage.', test:() => Object.entries(state.cards).filter(([k, c]) => k.endsWith('|altitude') && c.box >= UNLOCK_BOX).length >= 5},
+  {id:'famille', t:'Air de famille', d:'Dix familles botaniques acquises.', test:() => Object.entries(state.cards).filter(([k, c]) => k.endsWith('|famille') && c.box >= UNLOCK_BOX).length >= 10},
   {id:'duel', t:'Face à face', d:'Dix duels entre sosies remportés.', test:() => st().duelOk >= 10},
   {id:'longue', t:'Mémoire longue', d:'Une planche revue à trois semaines d\'intervalle.', test:() => Object.values(state.cards).some(c => c.box >= 5)},
   {id:'photo1', t:'Première observation', d:'Photographier un organe sur le terrain.', test:() => shotCount() >= 1},
@@ -1126,21 +1147,37 @@ function organAllowed(s, org){
   if (season() === 'hiver' && s.type === 'feuillu' && (org === 'feuille' || org === 'fruit')) return false;
   return photosOf(s.id, org).length > 0;
 }
+// Reconnaître : les planches. Connaître : le savoir sur les espèces déjà reconnues.
 function activeCards(){
-  return state.unlocked.filter(packOn).flatMap(id => organsOf(id).filter(o => organAllowed(sp(id), o.id)).map(o => `${id}|${o.id}`));
+  return unlockedKnown().filter(packOn).flatMap(id => organsOf(id).filter(o => organAllowed(sp(id), o.id)).map(o => `${id}|${o.id}`));
 }
-function allCardsOf(id){ return organsOf(id).filter(o => photosOf(id, o.id).length).map(o => `${id}|${o.id}`); }
-const packOn = id => state.packs.includes(sp(id).pack);
+function knowCards(){
+  if (!state.latin) return [];
+  const ok = unlockedKnown().filter(packOn).filter(latinEligible);
+  return ok.map(id => `${id}|latin`)
+    .concat(ok.filter(id => FAITS[id]).map(id => `${id}|fait`))
+    .concat(ok.filter(id => ALT[id]).map(id => `${id}|altitude`))
+    .concat(ok.filter(id => FAM[id]).map(id => `${id}|famille`));
+}
+const knowDue = () => knowCards().filter(k => card(k).due <= Date.now()).length;
+const poolOf = kind => kind === 'know' ? knowCards() : activeCards();
+function allCardsOf(id){ if (!sp(id)) return []; return organsOf(id).filter(o => photosOf(id, o.id).length).map(o => `${id}|${o.id}`); }
+const known = id => !!sp(id);
+const packOn = id => { const x = sp(id); return !!x && state.packs.includes(x.pack); };
+// Espèces présentes dans la progression mais absentes du catalogue chargé
+const missing = () => state.unlocked.filter(id => !sp(id));
 const inBloom = (x, m) => !x.floraison || x.floraison.includes((m === undefined ? new Date().getMonth() + 1 : m));
-function mastery(id){ const ks = allCardsOf(id); return ks.reduce((a, k) => a + Math.min(card(k).box, 4), 0) / (ks.length * 4); }
+function mastery(id){ const ks = allCardsOf(id); if (!ks.length) return 0; return ks.reduce((a, k) => a + Math.min(card(k).box, 4), 0) / (ks.length * 4); }
 function unlockProgress(){
-  const ks = state.unlocked.filter(packOn).flatMap(allCardsOf);
-  return {done: ks.filter(k => card(k).box >= UNLOCK_BOX).length, total: ks.length};
+  const ks = unlockedKnown().filter(packOn).flatMap(allCardsOf);
+  const done = ks.filter(k => card(k).box >= UNLOCK_BOX).length;
+  return {done, total: ks.length, need: Math.ceil(ks.length * UNLOCK_RATIO)};
 }
 function nextLocked(){ return SPECIES.find(s => !state.unlocked.includes(s.id) && state.packs.includes(s.pack)); }
+const unlockedKnown = () => state.unlocked.filter(known);
 function tryUnlock(){
   const p = unlockProgress(), next = nextLocked();
-  if (next && p.done === p.total){ state.unlocked.push(next.id); state.intros.push(next.id); save(); return next; }
+  if (next && p.total && p.done >= p.need){ state.unlocked.push(next.id); state.intros.push(next.id); save(); return next; }
   return null;
 }
 
@@ -1161,8 +1198,16 @@ addEventListener('scroll', () => $('topbar').classList.toggle('scrolled', scroll
 
 /* ---------- Accueil ---------- */
 function marksFor(id){
-  return organsOf(id).filter(o => photosOf(id, o.id).length).map(o => {
-    const b = card(`${id}|${o.id}`).box, shot = shotOf(id, o.id);
+  if (!sp(id)) return '';
+  const list = organsOf(id).filter(o => photosOf(id, o.id).length);
+  if (latinEligible(id)){
+    list.push({id:'latin', label:'Nom latin'});
+    if (FAITS[id]) list.push({id:'fait', label:'À savoir'});
+    if (ALT[id]) list.push({id:'altitude', label:'Altitude'});
+    if (FAM[id]) list.push({id:'famille', label:'Famille'});
+  }
+  return list.map(o => {
+    const b = card(`${id}|${o.id}`).box, shot = o.id === 'latin' ? null : shotOf(id, o.id);
     const cls = (b >= UNLOCK_BOX ? 'known' : (b ? 'seen' : '')) + (shot ? ' shot' : '');
     const label = `${o.label} : ${b >= UNLOCK_BOX ? 'acquise' : (b ? 'en cours' : 'jamais vue')}${shot ? ', photographiée' : ''}`;
     if (shot && !SEEN_SHOTS.has(`${id}|${o.id}`)) SEEN_SHOTS.add(`${id}|${o.id}`);
@@ -1170,31 +1215,32 @@ function marksFor(id){
   }).join('');
 }
 
-const ENTRY_ICONS = {
-  herbier:'<rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7c-3 2.5-3.6 6.5 0 9 3.6-2.5 3-6.5 0-9Z" fill="none" stroke="currentColor" stroke-width="1.5"/>',
-  progres:'<path d="M4 20V9M10 20V4M16 20v-8M22 20H2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-  carnet:'<rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.5"/>'
-};
-const entryIcon = k => `<span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ENTRY_ICONS[k]}</svg></span>`;
-
 function renderHome(){
   const p = unlockProgress(), next = nextLocked(), s = season(), now = Date.now();
-  const hero = pick(PHOTOS.filter(x => state.unlocked.includes(x.species)));
-  $('hero').innerHTML = `<div class="media">${media(hero)}</div>
-    <figcaption><span class="plate-name">${esc(sp(hero.species).fr)} <i class="sci">${esc(sp(hero.species).sci)}</i></span><span class="plate-organ">${organLabel(hero.organ).toLowerCase()}</span></figcaption>`;
+  const heroPool = PHOTOS.filter(x => state.unlocked.includes(x.species) && sp(x.species));
+  const hero = heroPool.length ? pick(heroPool) : null;
+  $('hero').innerHTML = hero
+    ? `<div class="media">${media(hero)}</div>
+       <figcaption><span class="plate-name">${esc(sp(hero.species).fr)} <i class="sci">${esc(sp(hero.species).sci)}</i></span><span class="plate-organ">${organLabel(hero.organ).toLowerCase()}</span></figcaption>`
+    : '<div class="noimg">Aucune planche disponible pour l\'instant</div>';
+  const miss = missing();
+  $('missInfo').hidden = !miss.length;
+  $('missInfo').textContent = miss.length
+    ? `${miss.length} espèce${miss.length > 1 ? 's' : ''} de ta progression ${miss.length > 1 ? 'viennent' : 'vient'} d'un fichier arbres.json qui n'est pas chargé. Elles reviendront dès qu'il sera de nouveau lu ; le reste fonctionne normalement.`
+    : '';
   $('seasonChip').textContent = s === 'hiver' ? 'indices d\'hiver' : 'belle saison';
   const due = activeCards().filter(k => card(k).due <= now).length;
-  const known = SPECIES.filter(x => state.unlocked.includes(x.id) && mastery(x.id) >= 0.5).length;
-  $('entries').innerHTML = `
-    <li><button class="card" data-v="herbier">${entryIcon('herbier')}<span><span class="t">Herbier</span><span class="s">${state.unlocked.length} espèces sur ${SPECIES.length}, ${known} bien connues</span></span></button></li>
-    <li><button class="card" data-v="carnet">${entryIcon('carnet')}<span><span class="t">Carnet de terrain</span><span class="s">${shotCount() ? `${shotCount()} photo${shotCount() > 1 ? 's' : ''}` : 'aucune photo'}</span></span></button></li>
-    <li><button class="card" data-v="progres">${entryIcon('progres')}<span><span class="t">Progrès</span><span class="s">${st().answers} planches vues, ${Object.keys(state.wins).length} succès sur ${WINS.length}</span></span></button></li>`;
-  $('entries').querySelectorAll('button').forEach(b => b.onclick = () => goto(b.dataset.v));
   const n = activeCards().length;
   $('start').disabled = n === 0;
   $('startInfo').textContent = n === 0
     ? 'Aucune planche avec ces réglages'
     : (due ? `${SESSION_LEN} planches · ${due} à revoir maintenant` : `${SESSION_LEN} planches · rien d'urgent, mais utile`);
+  const kn = knowCards().length, kd = knowDue();
+  $('startKnow').hidden = kn === 0;
+  $('knowInfo').textContent = kn === 0 ? '' :
+    (kd ? `${Math.min(SESSION_LEN, kn)} questions · ${kd} à revoir maintenant` : `${Math.min(SESSION_LEN, kn)} questions · latin, familles, altitudes, faits`);
+  $('knowHint').hidden = kd < 5;
+  $('knowHint').textContent = kd >= 5 ? `${kd} questions de connaissance t'attendent.` : '';
   const bits = [];
   if (state.focus !== 'all') bits.push(`${organLabel(state.focus).toLowerCase()} seulement`);
   if (state.milieu !== 'tous') bits.push(MILIEUX.find(m => m.id === state.milieu).label.toLowerCase());
@@ -1202,7 +1248,7 @@ function renderHome(){
   $('homeInfo').textContent = bits.length ? `Entraînement : ${bits.join(', ')}.` : '';
   $('homeInfo').hidden = !bits.length;
   $('unlockInfo').textContent = next
-    ? `Espèce suivante : ${p.done} planches sur ${p.total} acquises.`
+    ? `Espèce suivante : ${p.done} planches acquises sur les ${p.need} nécessaires (${p.total} en tout).`
     : 'Les cinq espèces du prototype sont débloquées.';
   $('sourceInfo').textContent = usingPhotos ? 'Photos iNaturalist.' : 'Prototype : dessins en attendant les photos.';
 }
@@ -1226,7 +1272,7 @@ function dexMatch(x){
 }
 function renderHerbier(){
   const inPacks = SPECIES.filter(x => state.packs.includes(x.pack));
-  const found = state.unlocked.filter(packOn).length;
+  const found = unlockedKnown().filter(packOn).length;
   $('dexCount').textContent = `${found} espèce${found > 1 ? 's' : ''} découverte${found > 1 ? 's' : ''} sur ${inPacks.length}. Touche une planche pour sa fiche.`;
   $('dexLegend').innerHTML = `<span>${icon('feuille', null)}jamais vue</span><span class="seen">${icon('ecorce', null)}en cours</span><span class="known">${icon('fruit', null)}acquise</span><span class="known">${icon('fleur', SHOTS[Object.keys(state.shots)[0]] || null)}ta photo</span>`;
   $('dexFilters').innerHTML = DEX_FILTERS.map(f => `<button data-f="${f.id}" aria-pressed="${state.dexFilter === f.id}">${f.label}</button>`).join('');
@@ -1251,8 +1297,9 @@ function renderHerbier(){
 $('dexSort').onchange = e => { state.dexSort = e.target.value; save(); renderHerbier(); };
 
 /* ---------- Fiche espèce ---------- */
-let ficheFromIntro = false, backTo = 'home';
+let ficheFromIntro = false, backTo = 'home', pendingKind = 'reco';
 function openFiche(id, fromIntro){
+  if (!sp(id)){ state.intros = state.intros.filter(i => i !== id); save(); return goto('home'); }
   ficheFromIntro = fromIntro;
   // ne recalcule la vue de retour qu'en arrivant sur la fiche, pas à chaque rafraîchissement
   if (!fromIntro && $('fiche').hidden) backTo = !$('herbier').hidden ? 'herbier' : (!$('carnet').hidden ? 'carnet' : 'home');
@@ -1314,7 +1361,7 @@ function openFiche(id, fromIntro){
     }
   };
   $('ficheOk').onclick = () => {
-    if (ficheFromIntro){ state.intros = state.intros.filter(i => i !== id); save(); startSession(); }
+    if (ficheFromIntro){ state.intros = state.intros.filter(i => i !== id); save(); startSession(pendingKind); }
     else { goto(backTo); }
   };
   show('fiche');
@@ -1322,9 +1369,12 @@ function openFiche(id, fromIntro){
 
 /* ---------- Session ---------- */
 let S = null, Q = null;
-function startSession(){
-  if (state.intros.length) return openFiche(state.intros[0], true);
-  S = {i:0, ok:0, retry:[], lastSp:null, confusions:[], wins:[], seen:new Set()};
+function startSession(kind){
+  const k = kind || (S && S.kind) || 'reco';
+  // une fiche d'espèce absente du catalogue ne peut pas s'ouvrir : on la garde pour plus tard
+  const ready = k === 'reco' ? state.intros.filter(known) : [];
+  if (ready.length){ pendingKind = k; return openFiche(ready[0], true); }
+  S = {i:0, ok:0, retry:[], lastSp:null, confusions:[], wins:[], seen:new Set(), kind:k};
   const today = new Date().toISOString().slice(0, 10);
   if (!st().days.includes(today)) st().days.push(today);
   show('quiz'); ask();
@@ -1334,7 +1384,7 @@ function pickCard(){
   S.retry.forEach(r => r.wait--);
   const ri = S.retry.findIndex(r => r.wait <= 0 && r.key.split('|')[0] !== S.lastSp);
   if (ri >= 0) return S.retry.splice(ri, 1)[0].key;
-  const keys = activeCards();
+  const keys = poolOf(S.kind);
   let pool = keys.filter(k => k.split('|')[0] !== S.lastSp);
   if (!pool.length) pool = keys;
   const now = Date.now();
@@ -1345,7 +1395,7 @@ function pickCard(){
 
 function buildOptions(sid){
   const n = Math.min(4, state.unlocked.length);
-  const others = state.unlocked.filter(x => x !== sid);
+  const others = unlockedKnown().filter(x => x !== sid);
   const chosen = [];
   const add = x => { if (others.includes(x) && !chosen.includes(x) && chosen.length < n - 1) chosen.push(x); };
   sp(sid).sosies.forEach(add);
@@ -1369,7 +1419,7 @@ function matchSpecies(text){
   const t = norm(text);
   if (t.length < 3) return null;
   let best = null, bestD = 99;
-  state.unlocked.filter(packOn).forEach(id => {
+  unlockedKnown().filter(packOn).forEach(id => {
     [sp(id).fr, sp(id).sci, sp(id).fr.split(' ')[0]].forEach(cand => {
       const c = norm(cand), d = levenshtein(t, c);
       const tol = c.length <= 6 ? 1 : (c.length <= 11 ? 2 : 3);
@@ -1384,23 +1434,51 @@ function plateHtml(p, cap){
     <figcaption><span class="plate-organ">${esc(cap)}</span></figcaption></figure>`;
 }
 
+function latinOptions(sid, key){
+  const n = Math.min(4, unlockedKnown().filter(packOn).length);
+  const others = unlockedKnown().filter(x => x !== sid && packOn(x));
+  // les pièges utiles : même genre d'abord, puis au hasard
+  const same = others.filter(x => genreOf(x) === genreOf(sid));
+  const picked = [];
+  const add = x => { if (!picked.includes(x) && picked.length < n - 1) picked.push(x); };
+  same.forEach(add); shuffle([...others]).forEach(add);
+  return shuffle([sid, ...picked]);
+}
+
 function chooseMode(sid, org, c){
   const sos = sp(sid).sosies.filter(x => state.unlocked.includes(x) && packOn(x) && photosOf(x, org).length);
   const others = organsOf(sid).filter(o => o.id !== org && photosOf(sid, o.id).length && organAllowed(sp(sid), o.id));
-  if (c.box >= RECALL_BOX && state.unlocked.filter(packOn).length >= 4) return {mode:'saisie'};
+  if (c.box >= RECALL_BOX && unlockedKnown().filter(packOn).length >= 4) return {mode:'saisie'};
   if (sos.length && c.box >= 1 && Math.random() < 0.4) return {mode:'duel', rival: pick(sos)};
   if (c.box >= 2 && others.length && Math.random() < 0.3) return {mode:'combo', second: pick(others).id};
   return {mode:'qcm'};
 }
 
 function ask(){
-  if (S.i >= SESSION_LEN || !activeCards().length) return endSession();
+  if (S.i >= SESSION_LEN || !poolOf(S.kind).length) return endSession();
   const key = pickCard();
   const [sid, org] = key.split('|');
   const c = card(key);
-  let ph = photosOf(sid, org).filter(p => p.id !== c.last);
+  let ph = (org === 'latin' || org === 'fait' || org === 'altitude' || org === 'famille')
+    ? organsOf(sid).flatMap(o => photosOf(sid, o.id))
+    : photosOf(sid, org).filter(p => p.id !== c.last);
   if (!ph.length) ph = photosOf(sid, org);
-  const m = chooseMode(sid, org, c);
+  const rivals = org === 'altitude'
+    ? (ALT[sid].max ? Object.keys(ALT).filter(x => x !== sid && sp(x) && state.unlocked.includes(x) && ALT[x].max && Math.abs(ALT[x].max - ALT[sid].max) >= 300) : [])
+    : [];
+  const cousins = org === 'famille'
+    ? unlockedKnown().filter(x => x !== sid && FAM[x] === FAM[sid] && packOn(x))
+    : [];
+  const etrangers = org === 'famille'
+    ? unlockedKnown().filter(x => FAM[x] && FAM[x] !== FAM[sid] && packOn(x))
+    : [];
+  const m = org === 'famille' ? (cousins.length >= 2 && etrangers.length && Math.random() < 0.5
+      ? {mode:'fam-intrus', trio:[sid, ...shuffle([...cousins]).slice(0, 2)], intrus: pick(etrangers)}
+      : {mode:'fam-quelle'})
+    : org === 'altitude' ? (rivals.length && Math.random() < 0.55 ? {mode:'alt-duel', rival: pick(rivals)} : {mode:'alt-etage'})
+    : org === 'fait' ? {mode:'fait-qui'}
+    : org === 'latin' ? {mode: c.box >= RECALL_BOX ? 'latin-saisie' : (Math.random() < 0.5 ? 'latin-fr' : 'fr-latin')}
+    : chooseMode(sid, org, c);
   Q = {key, sid, org, photo: pick(ph), recall: m.mode === 'saisie', ...m};
   $('track').innerHTML = Array.from({length: SESSION_LEN}, (_, i) => `<i class="${i < S.i ? 'done' : (i === S.i ? 'now' : '')}"></i>`).join('');
   const count = `planche ${S.i + 1} sur ${SESSION_LEN}`;
@@ -1410,7 +1488,72 @@ function ask(){
   preload(Q.photo);
   $('qCredit').innerHTML = Q.photo.attribution ? `${esc(Q.photo.attribution)} · <a href="${esc(Q.photo.obs)}" target="_blank" rel="noopener">iNaturalist</a>` : '';
 
-  if (Q.mode === 'duel'){
+  if (Q.mode === 'fam-quelle'){
+    $('qstage').innerHTML = `<div class="card latincard"><span class="riddle">À quelle famille appartient ${esc(sp(sid).art + sp(sid).fr.toLowerCase())} ?</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';
+    $('qText').textContent = 'Choisis sa famille botanique.';
+    const autres = shuffle(Object.keys(FAMILLES).filter(f => f !== FAM[sid])).slice(0, 3);
+    $('choices').className = 'choices';
+    $('choices').innerHTML = '';
+    shuffle([FAM[sid], ...autres]).forEach(f => {
+      const b = document.createElement('button');
+      b.className = 'choice'; b.dataset.sp = f;
+      b.innerHTML = esc(FAMILLES[f].nom);
+      b.onclick = () => answer(f);
+      $('choices').appendChild(b);
+    });
+    Q.expect = FAM[sid];
+  } else if (Q.mode === 'fam-intrus'){
+    Q.sid = Q.intrus;
+    $('qstage').innerHTML = `<div class="card latincard"><span class="riddle">Lequel n'est pas de la même famille que les autres ?</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';
+    $('qText').textContent = 'Trouve l\'intrus.';
+    renderChoices(shuffle([...m.trio, Q.intrus]), false, 'fr');
+  } else if (Q.mode === 'alt-etage'){
+    $('qstage').innerHTML = `<div class="card latincard"><span class="riddle">À quel étage pousse surtout ${esc(sp(sid).art + sp(sid).fr.toLowerCase())} ?</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';
+    $('qText').textContent = 'Choisis son étage de végétation.';
+    $('choices').className = 'choices';
+    $('choices').innerHTML = '';
+    shuffle([...ETAGES]).forEach(e => {
+      const b = document.createElement('button');
+      b.className = 'choice'; b.dataset.sp = e.id;
+      b.innerHTML = `${esc(e.label)}<i>${esc(e.sub)}</i>`;
+      b.onclick = () => answer(e.id);
+      $('choices').appendChild(b);
+    });
+    Q.expect = ALT[sid].etage;
+  } else if (Q.mode === 'alt-duel'){
+    Q.sid = ALT[Q.rival].max > ALT[sid].max ? Q.rival : sid;
+    Q.other = Q.sid === sid ? Q.rival : sid;
+    $('qstage').innerHTML = `<div class="card latincard"><span class="riddle">Lequel monte le plus haut en Suisse ?</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';
+    $('qText').textContent = 'Le duel des altitudes.';
+    renderChoices(shuffle([Q.sid, Q.other]), false, 'fr');
+  } else if (Q.mode === 'fait-qui'){
+    $('qstage').innerHTML = `<div class="card latincard"><span class="riddle">${esc(FAITS[sid][0])}</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';
+    $('qText').textContent = 'De quelle espèce s\'agit-il ?';
+    renderChoices(latinOptions(sid), false, 'fr');
+  } else if (Q.mode === 'latin-fr'){
+    $('qstage').innerHTML = `<div class="card latincard"><span class="lat">${esc(sp(sid).sci)}</span><span class="latsub">${count}</span></div>`;
+    $('qCredit').innerHTML = '';   // aucune planche affichée : pas de crédit à porter
+    $('qText').textContent = 'Quel arbre porte ce nom ?';
+    renderChoices(latinOptions(sid), false, 'fr');
+  } else if (Q.mode === 'fr-latin'){
+    $('qstage').innerHTML = `<figure class="plate" id="qplate"><div class="media" id="qImg">${media(Q.photo, true)}</div>
+      <figcaption><span class="plate-organ">${esc(sp(sid).fr)}</span><span>${count}</span></figcaption></figure>`;
+    $('qText').textContent = 'Quel est son nom latin ?';
+    renderChoices(latinOptions(sid), false, 'sci');
+  } else if (Q.mode === 'latin-saisie'){
+    $('qstage').innerHTML = `<figure class="plate" id="qplate"><div class="media" id="qImg">${media(Q.photo, true)}</div>
+      <figcaption><span class="plate-organ">${esc(sp(sid).fr)}</span><span>${count}</span></figcaption></figure>`;
+    $('qText').textContent = 'Écris son nom latin, genre au minimum.';
+    $('typebox').hidden = false;
+    $('typein').value = '';
+    $('typein').placeholder = 'Ex. Fagus ou Fagus sylvatica';
+    $('typein').focus({preventScroll:true});
+  } else if (Q.mode === 'duel'){
     const rivalPhoto = pick(photosOf(Q.rival, org));
     Q.duel = shuffle([{id:sid, p:Q.photo}, {id:Q.rival, p:rivalPhoto}]);
     $('qstage').innerHTML = `<div class="duel">${Q.duel.map((d, i) => `<button data-i="${i}">
@@ -1441,20 +1584,23 @@ function ask(){
   setTimeout(preloadSoon, 400);
 }
 
-function renderChoices(opts, recall){
+function renderChoices(opts, recall, style){
   $('choices').className = 'choices' + (recall ? ' recall' : '');
   $('choices').innerHTML = '';
   opts.forEach(id => {
     const b = document.createElement('button');
     b.className = 'choice'; b.dataset.sp = id;
-    b.innerHTML = recall ? esc(sp(id).fr) : `${esc(sp(id).fr)}<i>${esc(sp(id).sci)}</i>`;
+    b.innerHTML = style === 'fr' ? esc(sp(id).fr)
+      : style === 'sci' ? `<i class="latopt">${esc(sp(id).sci)}</i>`
+      : (recall ? esc(sp(id).fr) : `${esc(sp(id).fr)}<i>${esc(sp(id).sci)}</i>`);
     b.onclick = () => answer(id);
     $('choices').appendChild(b);
   });
 }
 
 function answer(chosen){
-  const ok = chosen === Q.sid, c = card(Q.key);
+  const ok = (Q.mode === 'alt-etage' || Q.mode === 'fam-quelle') ? chosen === Q.expect : chosen === Q.sid;
+  const c = card(Q.key);
   const wasBox = c.box;
   c.seen++; c.last = Q.photo.id;
   const wasDue = c.due <= Date.now();
@@ -1475,24 +1621,30 @@ function answer(chosen){
   } else {
     c.box = 1;
     c.due = Date.now() + INTERVALS[1];
-    if (sp(chosen)){
+    if (sp(chosen) && Q.mode !== 'alt-etage' && Q.mode !== 'fam-quelle'){
       const m = state.conf[Q.sid] || (state.conf[Q.sid] = {});
       m[chosen] = {n: confWeight(m[chosen]) + 1, t: Date.now()};
     }
     S.retry.push({key:Q.key, wait:3});
-    if (sp(chosen)) S.confusions.push([Q.sid, chosen]);
+    if (sp(chosen) && Q.mode !== 'alt-etage' && Q.mode !== 'fam-quelle') S.confusions.push([Q.sid, chosen]);
   }
   S.i++; if (ok) S.ok++; S.lastSp = Q.sid;
   S.wins.push(...checkWins());
   save();
 
-  if (Q.mode === 'duel'){
+  if (Q.mode === 'alt-etage' || Q.mode === 'fam-quelle'){
+    $('choices').querySelectorAll('.choice').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.sp === Q.expect) b.classList.add('good');
+      else if (b.dataset.sp === chosen) b.classList.add('bad');
+    });
+  } else if (Q.mode === 'duel'){
     $('qstage').querySelectorAll('button').forEach((b, i) => {
       b.disabled = true;
       b.querySelector('.plate').classList.add(Q.duel[i].id === Q.sid ? 'good' : 'bad');
     });
     if (ok) st().duelOk++;
-  } else if (Q.mode === 'saisie'){
+  } else if (Q.mode === 'saisie' || Q.mode === 'latin-saisie'){
     $('typebox').hidden = true;
     if (ok) st().typeOk++;
   } else {
@@ -1507,20 +1659,36 @@ function answer(chosen){
   const early = ok && !wasDue;
   const first = !S.seen.has(Q.sid);
   S.seen.add(Q.sid);
-  const factHtml = (first && right.fait) ? `<p class="fact"><b>Le saviez-vous</b>${esc(right.fait)}</p>` : '';
+  // sur une devinette, la réponse dit déjà le fait : inutile de le répéter
+  const factHtml = (first && right.fait && Q.org !== 'fait') ? `<p class="fact"><b>Le saviez-vous</b>${esc(right.fait)}</p>` : '';
   const toxHtml = right.toxique ? `<p class="toxbox"><b>Toxique</b>${esc(right.toxique)}</p>` : '';
   const levelHtml = levelled
     ? `<p class="levelup"><span class="m known">${icon(Q.org, shotOf(Q.sid, Q.org))}</span>${organLabel(Q.org)} du ${esc(right.fr.toLowerCase())} : marque acquise.</p>`
     : '';
+  const memo = (Q.org !== 'latin' && right.sci)
+    ? `<p class="memo"><i>${esc(right.sci)}</i>${right.dex && right.dex.alt ? ` · ${esc(right.dex.alt.toLowerCase())}` : ''}</p>`
+    : '';
+  const a = ALT[Q.sid];
+  const altHtml = Q.org !== 'altitude' ? '' : (Q.mode === 'alt-duel'
+    ? `<p>${esc(sp(Q.sid).art + sp(Q.sid).fr.toLowerCase())} monte à ${a.max} m, ${esc(sp(Q.other).art + sp(Q.other).fr.toLowerCase())} à ${ALT[Q.other].max} m.</p><p class="glose">${esc(a.note)}</p><p class="src">Source : ${esc(a.src)}</p>`
+    : `<p>${esc(a.note)}</p><p class="src">Source : ${esc(a.src)}</p>`);
+  const f = FAM[Q.sid] && FAMILLES[FAM[Q.sid]];
+  const famHtml = Q.org !== 'famille' ? '' : (Q.mode === 'fam-intrus'
+    ? `<p>${esc(sp(Q.intrus).fr)} est ${esc(FAMILLES[FAM[Q.intrus]].nom.toLowerCase())} ; les trois autres sont ${esc(FAMILLES[FAM[Q.trio[0]]].nom.toLowerCase())}.</p><p class="glose">${esc(FAMILLES[FAM[Q.trio[0]]].sig)}</p>`
+    : `<p class="latline">${esc(f.nom)}</p><p class="glose">${esc(f.sig)}${f.ex ? ' ' + esc(f.ex) : ''}</p>`);
+  const faitHtml = Q.org === 'fait' ? `<p class="glose">${esc(FAITS[Q.sid][1])}</p>` : '';
+  const latinHtml = Q.org === 'latin'
+    ? `<p class="latline"><i>${esc(right.sci)}</i></p>${gloseLatine(Q.sid) ? `<p class="glose">${gloseLatine(Q.sid)}</p>` : ''}`
+    : '';
   if (ok){
-    $('feedback').innerHTML = `<p class="verdict good"><span class="seal">✓</span>Oui, c'est ${esc(right.art + right.fr.toLowerCase())}.</p><p>${esc(tipOf(right, Q.org))}</p>${toxHtml}${factHtml}${levelHtml}${early ? '<p class="hintline">Révision en avance : elle t\'entraîne, mais ne décale pas la prochaine.</p>' : ''}`;
+    $('feedback').innerHTML = `<p class="verdict good"><span class="seal">✓</span>Oui, c'est ${esc(right.art + right.fr.toLowerCase())}.</p>${latinHtml || faitHtml || altHtml || famHtml || `<p>${esc(tipOf(right, Q.org))}</p>`}${memo}${toxHtml}${factHtml}${levelHtml}${early ? '<p class="hintline">Révision en avance : elle t\'entraîne, mais ne décale pas la prochaine.</p>' : ''}`;
   } else {
     const wrong = sp(chosen), wp = wrong ? photosOf(chosen, Q.org)[0] : null;
-    $('feedback').innerHTML = `<p class="verdict bad"><span class="seal">✕</span>${chosen === '__rien__' ? 'C\'était' : 'Non, c\'était'} ${esc(right.art + right.fr.toLowerCase())}.</p>
-      <div class="compare">
+    $('feedback').innerHTML = `<p class="verdict bad"><span class="seal">✕</span>${Q.mode === 'fam-quelle' ? `Non : ${esc(FAMILLES[Q.expect].nom.toLowerCase())}` : Q.mode === 'alt-etage' ? `Non : ${esc(ETAGES.find(e => e.id === Q.expect).label.toLowerCase())}` : `${chosen === '__rien__' ? 'C\'était' : 'Non, c\'était'} ${esc(right.art + right.fr.toLowerCase())}`}.</p>${latinHtml}${faitHtml}${altHtml}${famHtml}
+      ${(Q.org === 'latin' || Q.org === 'fait' || Q.org === 'altitude' || Q.org === 'famille') ? '' : `<div class="compare">
         <div><figure class="plate"><div class="media">${media(Q.photo)}</div></figure><h3>${esc(right.fr)}</h3><p>${esc(tipOf(right, Q.org))}</p></div>
         ${wrong ? `<div><figure class="plate"><div class="media">${media(wp)}</div></figure><h3>${esc(wrong.fr)} <span>ta réponse</span></h3><p>${esc(tipOf(wrong, Q.org))}</p></div>` : ''}
-      </div>${(right.toxique || (wrong && wrong.toxique)) ? `<p class="toxbox"><b>Toxique</b>${esc(right.toxique || wrong.toxique)}</p>` : ''}${factHtml}${levelHtml}`;
+      </div>`}${(right.toxique || (wrong && wrong.toxique)) ? `<p class="toxbox"><b>Toxique</b>${esc(right.toxique || wrong.toxique)}</p>` : ''}${factHtml}${levelHtml}`;
   }
   $('next').textContent = S.i >= SESSION_LEN ? 'Voir le bilan' : 'Planche suivante';
   openSheet();
@@ -1544,7 +1712,7 @@ function endSession(){
   $('endBody').innerHTML = `
     <div class="card endcard reveal" style="animation-delay:0ms">
       <p class="big" id="endScore">0</p>
-      <p class="sub">planches reconnues sur ${S.i}</p>
+      <p class="sub">${S.kind === 'know' ? 'bonnes réponses' : 'planches reconnues'} sur ${S.i}</p>
     </div>
     ${unlocked ? `<p class="fact reveal" ${delay()}><b>Nouvelle espèce</b>${esc(unlocked.fr)} rejoint ton herbier. Sa fiche ouvre la prochaine session.</p>` : ''}
     ${S.wins.length ? S.wins.map(w => `<div class="winline reveal" ${delay()}><span class="seal">✓</span><span><b>${esc(w.t)}</b><br><span class="muted">${esc(w.d)}</span></span></div>`).join('') : ''}
@@ -1593,7 +1761,7 @@ function renderProgres(){
     <div class="stats">
       <span class="stat card"><b>${a.answers}</b><span>planches vues</span></span>
       <span class="stat card"><b>${rate} %</b><span>de réussite</span></span>
-      <span class="stat card"><b>${shotCount()}</b><span>organes photographiés</span></span>
+      <span class="stat card"><b>${Object.entries(state.cards).filter(([k, c]) => (k.endsWith('|latin') || k.endsWith('|fait') || k.endsWith('|altitude') || k.endsWith('|famille')) && c.box >= UNLOCK_BOX).length}</b><span>savoirs acquis</span></span>
     </div>
     <h3>Par organe</h3><div class="bars">${organs}</div>
     <h3>Sessions</h3>${hist}
@@ -1642,6 +1810,7 @@ function renderSettings(){
     if (state.unlocked.filter(packOn).length === 0 && first.length){ state.unlocked.push(first[0].id); state.intros.push(first[0].id); }
     checkFocus(); save(); renderSettings();
   });
+  $('setLatin').checked = state.latin;
   $('setMilieu').innerHTML = MILIEUX.map(m => `<option value="${m.id}">${m.label}</option>`).join('');
   $('setMilieu').value = state.milieu;
   $('setSeason').value = state.season;
@@ -1651,6 +1820,7 @@ function renderSettings(){
     + usable.map(o => `<option value="${o.id}">${o.label} uniquement</option>`).join('');
   $('setFocus').value = state.focus;
   const nphotos = PHOTOS.filter(p => p.src).length;
+  $('version').textContent = 'Version ' + VERSION;
   $('loadInfo').textContent = usingPhotos
     ? `${nphotos} planches photo chargées depuis arbres.json.` + (failed ? ` ${failed} images n'ont pas pu être affichées : vérifie ta connexion ou un éventuel bloqueur.` : '')
     : "Aucun arbres.json lu : l'app tourne sur mes dessins. Le fichier doit être à côté d'index.html, et la page servie par GitHub Pages, pas ouverte depuis les fichiers du téléphone.";
@@ -1660,6 +1830,7 @@ function renderSettings(){
 $('setSeason').onchange = e => { state.season = e.target.value; save(); };
 $('setFocus').onchange = e => { state.focus = e.target.value; save(); };
 $('setMilieu').onchange = e => { state.milieu = e.target.value; save(); };
+$('setLatin').onchange = e => { state.latin = e.target.checked; save(); };
 $('unlockAll').onclick = () => {
   SPECIES.filter(x => state.packs.includes(x.pack)).forEach(x => { if (!state.unlocked.includes(x.id)){ state.unlocked.push(x.id); state.intros.push(x.id); } });
   save(); $('setMsg').textContent = 'Toutes les espèces sont débloquées.';
@@ -1679,12 +1850,27 @@ function goto(v){
   show(v);
 }
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => goto(b.dataset.v));
-$('start').onclick = startSession;
+$('start').onclick = () => startSession('reco');
+$('startKnow').onclick = () => startSession('know');
 $('next').onclick = () => { closeSheet(); setTimeout(ask, 170); };
 $('scrim').onclick = () => $('next').click();
+function matchLatin(text){
+  const t = norm(text);
+  if (t.length < 3) return null;
+  let best = null, bestD = 99;
+  unlockedKnown().filter(packOn).forEach(id => {
+    [sp(id).sci, genreOf(id)].forEach(cand => {
+      const c = norm(cand), d = levenshtein(t, c);
+      const tol = c.length <= 6 ? 1 : (c.length <= 11 ? 2 : 3);
+      if (d <= tol && d < bestD){ best = id; bestD = d; }
+    });
+  });
+  return best;
+}
 function submitType(){
   if ($('typebox').hidden) return;
-  const guess = matchSpecies($('typein').value);
+  const v = $('typein').value;
+  const guess = Q.mode === 'latin-saisie' ? matchLatin(v) : matchSpecies(v);
   answer(guess || '__rien__');
 }
 $('typeok').onclick = submitType;
@@ -1692,7 +1878,7 @@ $('typeno').onclick = () => { if (!$('typebox').hidden) answer('__rien__'); };
 $('typein').onkeydown = e => { if (e.key === 'Enter'){ e.preventDefault(); submitType(); } };
 $('back').onclick = () => goto(backTo);
 $('quit').onclick = () => goto('home');
-$('again').onclick = startSession;
+$('again').onclick = () => startSession(S && S.kind);
 $('backHome').onclick = () => goto('home');
 
 /* ---------- Export et import ---------- */
@@ -2003,7 +2189,7 @@ const LORE = {
    "bois": "Bois de haute valeur : ébénisterie, crosses de fusil",
    "suisse": "Planté partout sur le Plateau, rarement spontané en forêt"
   },
-  "fait": "Ses racines libèrent une substance qui gêne la croissance des autres plantes : peu de choses poussent sous un noyer.",
+  "fait": "Les noyers produisent la juglone, qui gêne la croissance d'autres plantes. L'effet est marqué chez le noyer noir américain ; sous notre noyer commun, il reste bien plus discret.",
   "terrain": "Froisse une feuille : l'odeur est puissante et résineuse, sans équivalent.",
   "tips": {
    "feuille": "Feuille composée de 5 à 9 folioles à bord lisse, très odorante au froissement.",
@@ -2423,6 +2609,408 @@ const LORE = {
    "silhouette": "Silhouette conique et claire, branches un peu tombantes ; nu en hiver."
   }
  }
+};
+
+const GENRES = {
+ "Fagus": "les hêtres",
+ "Picea": "les épicéas",
+ "Abies": "les sapins",
+ "Betula": "les bouleaux",
+ "Carpinus": "les charmes",
+ "Quercus": "les chênes",
+ "Acer": "les érables",
+ "Fraxinus": "les frênes",
+ "Tilia": "les tilleuls",
+ "Alnus": "les aulnes",
+ "Corylus": "les noisetiers",
+ "Castanea": "les châtaigniers",
+ "Juglans": "les noyers",
+ "Prunus": "les cerisiers et prunelliers",
+ "Sorbus": "les sorbiers et alisiers",
+ "Ulmus": "les ormes",
+ "Salix": "les saules",
+ "Populus": "les peupliers",
+ "Aesculus": "les marronniers",
+ "Robinia": "les robiniers",
+ "Sambucus": "les sureaux",
+ "Cornus": "les cornouillers",
+ "Ilex": "les houx",
+ "Taxus": "les ifs",
+ "Pinus": "les pins",
+ "Larix": "les mélèzes",
+ "Leucanthemum": "les marguerites",
+ "Gentiana": "les gentianes",
+ "Allium": "les aulx",
+ "Colchicum": "les colchiques",
+ "Rubus": "les ronces et framboisiers",
+ "Rosa": "les églantiers et rosiers",
+ "Crataegus": "les aubépines",
+ "Vaccinium": "les myrtilles et airelles",
+ "Viburnum": "les viornes",
+ "Juniperus": "les genévriers",
+ "Frangula": "les bourdaines",
+ "Euonymus": "les fusains",
+ "Ligustrum": "les troènes",
+ "Lonicera": "les chèvrefeuilles"
+};
+const EPITHETES = {
+ "sylvatica": "des forêts",
+ "sylvestris": "des forêts",
+ "alba": "blanc",
+ "nigra": "noir",
+ "glutinosa": "collant, poisseux",
+ "decidua": "caduc, qui tombe",
+ "petraea": "des rochers",
+ "robur": "la force, le bois dur",
+ "pendula": "pendant",
+ "cordata": "en forme de cœur",
+ "glabra": "lisse, sans poils",
+ "caprea": "de la chèvre",
+ "tremula": "qui tremble",
+ "avium": "des oiseaux",
+ "aucuparia": "qui sert à capturer les oiseaux",
+ "excelsior": "plus élevé",
+ "pseudoplatanus": "faux platane",
+ "platanoides": "qui ressemble au platane",
+ "betulus": "proche du bouleau",
+ "aria": "ancien nom de l’alisier",
+ "hippocastanum": "châtaigne de cheval",
+ "pseudoacacia": "faux acacia",
+ "aquifolium": "à feuilles pointues",
+ "baccata": "qui porte des baies",
+ "cembra": "nom alpin de l’arole",
+ "sanguinea": "sanglant, rouge sang",
+ "acaulis": "sans tige",
+ "autumnale": "d’automne",
+ "ursinum": "des ours",
+ "vulgare": "commun",
+ "vulgaris": "commun",
+ "regia": "royal",
+ "sativa": "cultivé",
+ "majalis": "de mai",
+ "officinale": "des apothicaires, médicinal",
+ "pratensis": "des prés",
+ "montana": "des montagnes",
+ "arvensis": "des champs",
+ "palustris": "des marais",
+ "communis": "commun",
+ "napellus": "petit navet",
+ "purpurea": "pourpre",
+ "maculatum": "tacheté",
+ "ferrugineum": "couleur rouille",
+ "angustifolium": "à feuilles étroites",
+ "europaeus": "d’Europe",
+ "spinosa": "épineux",
+ "monogyna": "à un seul style",
+ "canina": "du chien",
+ "idaeus": "du mont Ida",
+ "fruticosus": "buissonnant",
+ "myrtillus": "petite myrte",
+ "vitis-idaea": "vigne du mont Ida",
+ "xylosteum": "à bois dur",
+ "mas": "mâle",
+ "racemosa": "en grappes",
+ "opulus": "ancien nom latin",
+ "lantana": "ancien nom latin",
+ "verna": "du printemps",
+ "barbata": "barbu",
+ "odoratum": "parfumé",
+ "ulmaria": "à feuilles d’orme",
+ "hederacea": "qui ressemble au lierre",
+ "jacea": "ancien nom",
+ "millefolium": "aux mille feuilles",
+ "rotundifolia": "à feuilles rondes",
+ "salicaria": "qui ressemble au saule",
+ "nemorosa": "des bois",
+ "clusii": "dédié au botaniste Clusius",
+ "incana": "gris blanchâtre",
+ "veris": "du printemps"
+};
+
+const genreOf = id => (sp(id).sci || '').split(' ')[0];
+const epitheteOf = id => (sp(id).sci || '').split(' ')[1] || '';
+function gloseLatine(id){
+  const g = genreOf(id), e = epitheteOf(id);
+  const parts = [];
+  if (GENRES[g]) parts.push(`<b>${esc(g)}</b> : ${esc(GENRES[g])}`);
+  if (EPITHETES[e]) parts.push(`<b>${esc(e)}</b> : ${esc(EPITHETES[e])}`);
+  return parts.join(' · ');
+}
+// Le latin n'arrive qu'une fois l'espèce reconnaissable : deux organes acquis.
+const latinEligible = id => !!sp(id) && allCardsOf(id).filter(k => card(k).box >= UNLOCK_BOX).length >= 2;
+
+const FAITS = {
+ "sapin": [
+  "Quel arbre est le plus haut d'Europe, avec des individus dépassant 50 mètres ?",
+  "Le sapin blanc est l'arbre européen le plus haut : on connaît des sujets de 60 m, et le record approche 65 m."
+ ],
+ "meleze": [
+  "Quel est le seul de nos conifères indigènes à perdre toutes ses aiguilles en hiver ?",
+  "Son nom d'espèce le dit : Larix decidua, decidua signifiant caduc. En octobre, les mélézins virent à l'or avant de se dénuder."
+ ],
+ "aulne": [
+  "Quel arbre enrichit le sol en azote grâce à une bactérie logée dans ses racines ?",
+  "Des nodosités abritent la bactérie Frankia alni, qui fixe l'azote de l'air. C'est ce qui lui permet de coloniser des sols nus."
+ ],
+ "epicea": [
+  "Quelle essence est de loin la plus fréquente de la forêt suisse ?",
+  "L'épicéa représente environ 37 % des arbres du pays, devant le hêtre et le sapin blanc. Son bois sert aussi de table d'harmonie aux violons."
+ ],
+ "charme": [
+  "Quel est le bois le plus dur de nos grands arbres forestiers, choisi pour les billots de boucher ?",
+  "Le charme, avec une dureté Janka d'environ 7 250 N. Seuls de petits arbustes comme le buis ou le cornouiller mâle font mieux en Europe."
+ ],
+ "tremble": [
+  "Quel arbre doit son nom à un pétiole aplati, qui fait frémir ses feuilles au moindre souffle ?",
+  "Le pétiole du tremble est aplati perpendiculairement au limbe : la feuille pivote dès que l'air bouge."
+ ],
+ "robinier": [
+  "De quel arbre provient le miel vendu sous le nom d'acacia ?",
+  "Du robinier faux-acacia, qui n'appartient pas au genre Acacia. Ses fleurs blanches en grappes sont très mellifères."
+ ],
+ "orme": [
+  "Quel arbre a été décimé par un champignon transporté d'arbre en arbre par des scolytes ?",
+  "La graphiose, due à Ophiostoma ulmi puis novo-ulmi : les scolytes portent les spores et les inoculent en mordant les jeunes rameaux."
+ ],
+ "if": [
+  "Chez quel arbre tout est toxique sauf la chair rouge qui entoure la graine ?",
+  "L'if : ses alcaloïdes, les taxines, sont dans les aiguilles, l'écorce et la graine. Seul l'arille rouge ne l'est pas — mais la graine qu'il contient, si."
+ ],
+ "marronnier": [
+  "Quel arbre produit un fruit toxique régulièrement confondu avec la châtaigne ?",
+  "Le marron d'Inde, toxique à cause de l'esculine. Selon l'Anses, cette confusion représente 11 % des confusions de plantes signalées aux centres antipoison."
+ ],
+ "noyer": [
+  "Quel arbre produit la juglone, substance qui gêne la croissance d'autres plantes ?",
+  "La juglone est présente chez les Juglandacées. L'effet est net chez le noyer noir américain, plus discret sous notre noyer commun."
+ ],
+ "arole": [
+  "Quel arbre de haute montagne dépend d'un oiseau pour se ressemer ?",
+  "Le casse-noix moucheté enfouit ses graines par dizaines dans des caches ; celles qu'il ne retrouve pas germent. Ses graines sont trop lourdes pour le vent."
+ ],
+ "hetre": [
+  "Quel arbre produit ses fruits en masse certaines années seulement, tous les arbres d'une région en même temps ?",
+  "Les « années à faînes » reviennent tous les deux à huit ans selon le temps, l'altitude et la latitude."
+ ],
+ "ail": [
+  "Quelle plante de sous-bois se reconnaît à coup sûr en froissant une feuille ?",
+  "L'ail des ours dégage aussitôt une odeur d'ail. C'est le seul test fiable pour le distinguer du colchique et du muguet, tous deux mortels."
+ ],
+ "colchique": [
+  "Quelle fleur sort de terre nue en automne, ses feuilles n'apparaissant qu'au printemps suivant ?",
+  "Le colchique d'automne fleurit d'août à octobre sans une feuille ; ses larges feuilles poussent au printemps, et c'est alors qu'on les confond avec l'ail des ours."
+ ]
+};
+
+const ALT = {
+ "hetre": {
+  "etage": "montagnard",
+  "max": 1900,
+  "note": "Étage montagnard ; atteint 1900 m en Suisse.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "sapin": {
+  "etage": "montagnard",
+  "max": 2000,
+  "note": "Étage montagnard ; 70 % des sapins suisses poussent entre 600 et 1200 m.",
+  "src": "ETH Zurich / GWP 2023 ; WSL"
+ },
+ "epicea": {
+  "etage": "subalpin",
+  "max": 2350,
+  "note": "Étage subalpin ; monte à 2350 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "meleze": {
+  "etage": "subalpin",
+  "max": 2900,
+  "note": "Étage subalpin ; c'est l'arbre qui monte le plus haut en Suisse, jusqu'à 2900 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "arole": {
+  "etage": "subalpin",
+  "max": 2800,
+  "note": "Subalpin à alpin, dès 1500 m : jusqu'à 2400 m aux Grisons, 2800 m en Valais.",
+  "src": "WSL, fiche Arve"
+ },
+ "charme": {
+  "etage": "collinéen",
+  "max": 1200,
+  "note": "Absent des montagnes : il dépasse rarement 1200 m.",
+  "src": "Ministère de l'agriculture (FR), fiche Carpinus betulus"
+ },
+ "chataignier": {
+  "etage": "collinéen",
+  "max": 900,
+  "note": "Espèce thermophile des étages les plus bas, surtout au Tessin et en Valais.",
+  "src": "Observatoire de l'écosystème forestier VD ; Info Flora"
+ },
+ "gentiane": {
+  "etage": "subalpin",
+  "max": 3000,
+  "note": "Pelouses de montagne, de 800 à 3000 m, sur sols pauvres en calcaire.",
+  "src": "Info Flora / Flora Helvetica"
+ },
+ "pin": {
+  "etage": "indifférent",
+  "max": 2200,
+  "note": "Présent à tous les étages, des vallées sèches jusqu'à 2200 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "chene-pedoncule": {
+  "etage": "collinéen",
+  "max": 1400,
+  "note": "Étage collinéen à submontagnard ; ne dépasse guère 1400 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "sycomore": {
+  "etage": "indifférent",
+  "max": 2000,
+  "note": "Indifférent à l'étage : de la plaine jusqu'à 2000 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "tilleul": {
+  "etage": "collinéen",
+  "max": 1500,
+  "note": "Étage collinéen à submontagnard ; jusqu'à 1500 m.",
+  "src": "ETH Zurich / GWP, portraits d'essences 2023"
+ },
+ "aulne": {
+  "etage": "collinéen",
+  "max": 1300,
+  "note": "Préfère les basses altitudes, autour de 500 m, et pousse jusqu'à 1300 m.",
+  "src": "WSL, fiche Schwarzerle"
+ },
+ "frene": {
+  "etage": "collinéen",
+  "note": "Du collinéen au montagnard inférieur : forêts fraîches, ravins et bords de rivières.",
+  "src": "Université d'Innsbruck, fiche Fraxinus excelsior"
+ },
+ "sorbier": {
+  "etage": "indifférent",
+  "note": "Du collinéen au montagnard supérieur : espèce pionnière très tolérante, jusqu'en haute montagne.",
+  "src": "Université d'Innsbruck, fiche Sorbus aucuparia"
+ }
+};
+const ETAGES = [{id:'collinéen', label:'Collinéen', sub:'plaine et coteaux, sous 800 m'},{id:'montagnard', label:'Montagnard', sub:'environ 800 à 1400 m'},{id:'subalpin', label:'Subalpin', sub:'de 1400 m à la limite de la forêt'},{id:'indifférent', label:'À tous les étages', sub:'de la plaine à la montagne'}];
+const FAMILLES = {
+ "pinacees": {
+  "nom": "Pinacées",
+  "sig": "Conifères à aiguilles et à cônes, graines ailées."
+ },
+ "taxacees": {
+  "nom": "Taxacées",
+  "sig": "Conifères sans cône : la graine est enveloppée d'une arille charnue."
+ },
+ "fagacees": {
+  "nom": "Fagacées",
+  "sig": "Fruit sec logé dans une cupule : gland, faîne, châtaigne."
+ },
+ "betulacees": {
+  "nom": "Bétulacées",
+  "sig": "Chatons et petits fruits secs ; écorce souvent marquée de lenticelles."
+ },
+ "sapindacees": {
+  "nom": "Sapindacées",
+  "sig": "Feuilles opposées ; fruits ailés chez les érables.",
+  "ex": "Autrefois Acéracées et Hippocastanacées."
+ },
+ "malvacees": {
+  "nom": "Malvacées",
+  "sig": "Chez le tilleul, les fruits pendent sous une bractée en forme d'aile.",
+  "ex": "Autrefois Tiliacées."
+ },
+ "oleacees": {
+  "nom": "Oléacées",
+  "sig": "Feuilles opposées, bourgeons noirs chez le frêne ; famille de l'olivier."
+ },
+ "rosacees": {
+  "nom": "Rosacées",
+  "sig": "Fleurs à cinq pétales et nombreuses étamines ; fruits charnus."
+ },
+ "salicacees": {
+  "nom": "Salicacées",
+  "sig": "Chatons, et graines emportées par le vent dans un duvet cotonneux."
+ },
+ "ulmacees": {
+  "nom": "Ulmacées",
+  "sig": "Feuille à base asymétrique ; fruit plat et arrondi."
+ },
+ "juglandacees": {
+  "nom": "Juglandacées",
+  "sig": "Feuilles composées très odorantes ; fruit à coque dure."
+ },
+ "fabacees": {
+  "nom": "Fabacées",
+  "sig": "Fleurs de type pois et fruits en gousse ; racines souvent fixatrices d'azote."
+ },
+ "viburnacees": {
+  "nom": "Viburnacées",
+  "sig": "Fleurs en larges bouquets plats, suivies de baies charnues.",
+  "ex": "Autrefois Caprifoliacées, puis Adoxacées."
+ },
+ "aquifoliacees": {
+  "nom": "Aquifoliacées",
+  "sig": "Feuilles coriaces et persistantes ; baies rouges sur les pieds femelles."
+ },
+ "cornacees": {
+  "nom": "Cornacées",
+  "sig": "Nervures des feuilles arquées, convergeant vers la pointe."
+ },
+ "amaryllidacees": {
+  "nom": "Amaryllidacées",
+  "sig": "Plantes à bulbe, fleurs en ombelle au sommet d'une hampe nue.",
+  "ex": "Les aulx étaient autrefois rangés chez les Liliacées."
+ },
+ "colchicacees": {
+  "nom": "Colchicacées",
+  "sig": "Plantes à bulbe, fleurs à six pièces ; famille du colchique, très toxique.",
+  "ex": "Autrefois Liliacées."
+ },
+ "gentianacees": {
+  "nom": "Gentianacées",
+  "sig": "Corolle soudée en trompette ; plantes souvent amères."
+ },
+ "asteracees": {
+  "nom": "Astéracées",
+  "sig": "Ce qui ressemble à une fleur est un capitule : des dizaines de fleurs réunies."
+ }
+};
+const FAM = {
+ "hetre": "fagacees",
+ "chene-pedoncule": "fagacees",
+ "chene-sessile": "fagacees",
+ "chataignier": "fagacees",
+ "epicea": "pinacees",
+ "sapin": "pinacees",
+ "meleze": "pinacees",
+ "arole": "pinacees",
+ "pin": "pinacees",
+ "if": "taxacees",
+ "bouleau": "betulacees",
+ "aulne": "betulacees",
+ "charme": "betulacees",
+ "noisetier": "betulacees",
+ "sycomore": "sapindacees",
+ "erable-plane": "sapindacees",
+ "marronnier": "sapindacees",
+ "tilleul": "malvacees",
+ "frene": "oleacees",
+ "merisier": "rosacees",
+ "sorbier": "rosacees",
+ "alisier": "rosacees",
+ "saule": "salicacees",
+ "tremble": "salicacees",
+ "orme": "ulmacees",
+ "noyer": "juglandacees",
+ "robinier": "fabacees",
+ "sureau": "viburnacees",
+ "houx": "aquifoliacees",
+ "cornouiller": "cornacees",
+ "ail": "amaryllidacees",
+ "colchique": "colchicacees",
+ "gentiane": "gentianacees",
+ "marguerite": "asteracees"
 };
 
 const PACK_LABELS = {arbres:'Arbres de forêt', arbustes:'Arbustes et baies', fleurs:'Fleurs des prés et d\'alpage'};
